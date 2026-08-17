@@ -482,44 +482,6 @@
     html{scroll-behavior:auto;}
     *{transition:none !important;}
   }
-  /* ============ Nút chia sẻ (share) ============ */
-  .share-fab{
-    position:fixed; right:18px; bottom:18px; z-index:9999;
-    display:flex; flex-direction:column; align-items:flex-end; gap:10px;
-  }
-  .share-menu{
-    display:none; flex-direction:column; align-items:stretch; gap:8px;
-    opacity:0; transform:translateY(6px);
-    transition:opacity .2s ease, transform .2s ease;
-  }
-  .share-menu.open{ display:flex; opacity:1; transform:translateY(0); }
-  .share-btn{
-    width:54px; height:54px; border-radius:50%; border:none; cursor:pointer;
-    display:flex; align-items:center; justify-content:center;
-    background:var(--navy); color:#fff; font-size:22px;
-    box-shadow:0 6px 18px rgba(10,29,66,.32);
-    transition:transform .15s ease, background .15s ease;
-  }
-  .share-btn:hover{ transform:scale(1.08); background:var(--navy-soft); }
-  .share-item{
-    display:flex; align-items:center; gap:10px;
-    background:var(--paper); border:1px solid var(--cream-deep);
-    border-radius:999px; padding:9px 16px 9px 12px;
-    color:var(--navy); text-decoration:none; cursor:pointer;
-    font-family:'IBM Plex Mono',monospace; font-size:12px; font-weight:500;
-    box-shadow:0 4px 12px rgba(10,29,66,.14);
-    transition:background .15s ease;
-  }
-  .share-item:hover{ background:var(--cream); }
-  .share-item .ico{ font-size:16px; line-height:1; }
-  .share-toast{
-    position:fixed; bottom:88px; right:20px; z-index:10000;
-    background:var(--navy); color:#fff; padding:11px 18px; border-radius:10px;
-    font-family:'IBM Plex Mono',monospace; font-size:12px;
-    opacity:0; transform:translateY(8px); pointer-events:none;
-    transition:opacity .25s ease, transform .25s ease;
-  }
-  .share-toast.show{ opacity:1; transform:translateY(0); }
 </style>
 </head>
 <body>
@@ -1050,85 +1012,6 @@
     btn.style.opacity = '0.75';
     setTimeout(function(){ btn.textContent = original; btn.style.opacity = '1'; }, 3000);
   });
-</script>
-
-<!-- ============ Nút chia sẻ (share) ============ -->
-<div class="share-fab">
-  <div class="share-menu" id="shareMenu">
-    <a class="share-item" id="shareFb" href="#" target="_blank" rel="noopener">
-      <span class="ico">📘</span> Chia sẻ Facebook
-    </a>
-    <a class="share-item" id="shareZalo" href="#" target="_blank" rel="noopener">
-      <span class="ico">💬</span> Chia sẻ Zalo
-    </a>
-    <button class="share-item" id="shareCopy" type="button">
-      <span class="ico">🔗</span> Sao chép liên kết
-    </button>
-  </div>
-  <button class="share-btn" id="shareFabBtn" type="button" aria-label="Chia sẻ">📤</button>
-</div>
-<div class="share-toast" id="shareToast">Đã sao chép liên kết ✓</div>
-
-<script>
-(function(){
-  var PAGE_URL = 'https://khanhdesignvn-cloud.github.io/website-hoikhoa0306/';
-  var PAGE_TITLE = document.title;
-
-  var fab = document.getElementById('shareFabBtn');
-  var menu = document.getElementById('shareMenu');
-  var fb = document.getElementById('shareFb');
-  var zalo = document.getElementById('shareZalo');
-  var copy = document.getElementById('shareCopy');
-  var toast = document.getElementById('shareToast');
-
-  fb.href = 'https://www.facebook.com/sharer/sharer.php?u=' + encodeURIComponent(PAGE_URL);
-  zalo.href = 'https://zalo.me/share?url=' + encodeURIComponent(PAGE_URL) + '&text=' + encodeURIComponent(PAGE_TITLE);
-
-  function nativeShare(){
-    if (navigator.share) {
-      navigator.share({ title: PAGE_TITLE, url: PAGE_URL }).catch(function(){});
-      return true;
-    }
-    return false;
-  }
-
-  // Nút chính: mobile dùng share gốc (hiện cả Zalo/FB), desktop mở menu
-  fab.addEventListener('click', function(){
-    if (!nativeShare()) { menu.classList.toggle('open'); }
-  });
-
-  // Zalo trên desktop: ưu tiên share gốc, không thì mở link Zalo
-  zalo.addEventListener('click', function(e){
-    if (navigator.share) {
-      e.preventDefault();
-      navigator.share({ title: PAGE_TITLE, url: PAGE_URL }).catch(function(){});
-    }
-  });
-
-  function showToast(){
-    toast.classList.add('show');
-    setTimeout(function(){ toast.classList.remove('show'); }, 2200);
-  }
-
-  copy.addEventListener('click', function(){
-    if (navigator.clipboard && navigator.clipboard.writeText) {
-      navigator.clipboard.writeText(PAGE_URL).then(showToast).catch(function(){ fallbackCopy(); });
-    } else {
-      fallbackCopy();
-    }
-  });
-
-  function fallbackCopy(){
-    var ta = document.createElement('textarea');
-    ta.value = PAGE_URL;
-    ta.style.position = 'fixed'; ta.style.opacity = '0';
-    document.body.appendChild(ta);
-    ta.select();
-    try { document.execCommand('copy'); } catch(e){}
-    document.body.removeChild(ta);
-    showToast();
-  }
-})();
 </script>
 
 </body>
