@@ -883,7 +883,7 @@
         <input type="text" name="ghichu" placeholder="Không bắt buộc">
       </div>
       <button class="btn btn-primary" type="submit">Gửi Xác Nhận</button>
-      <p class="form-note">Bấm gửi sẽ mở ứng dụng email của bạn với nội dung đăng ký điền sẵn — chỉ cần bấm Gửi để hoàn tất.</p>
+      <p class="form-note">Bấm gửi là đăng ký thành công ngay — không cần mở email.</p>
     </form>
     <div style="grid-column:1/-1; text-align:center; margin-top:10px;">
       <a href="danh-sach.html" class="btn btn-ghost">📋 Danh Sách Tham Dự</a>
@@ -996,7 +996,9 @@
     });
   });
 
-  // RSVP submit -> mở email soạn sẵn gửi về khanhdesignvn@gmail.com
+  // RSVP submit -> gửi thẳng lên server vào danh sách (không cần email); nếu lỗi thì mở email dự phòng
+  var REGISTER_URL = 'https://sense-sega-referring-got.trycloudflare.com/register';
+
   document.getElementById('rsvp-form').addEventListener('submit', function(e){
     e.preventDefault();
     var f = this;
@@ -1006,22 +1008,43 @@
     var soluong = f.soluong.value;
     var ghichu = f.ghichu.value.trim();
 
-    var subject = 'Dang ky tham du - Hoi Khoa 2003-2006 - ' + hoten;
-    var body =
-      'Ho va ten: ' + hoten + '\n' +
-      'Lop nien khoa 2003-2006: ' + (lop || '(khong ghi)') + '\n' +
-      'So dien thoai: ' + sdt + '\n' +
-      'So nguoi tham du: ' + soluong + '\n' +
-      'Ghi chu: ' + (ghichu || '(khong co)');
-
-    var mailtoLink = 'mailto:khanhdesignvn@gmail.com?subject=' + encodeURIComponent(subject) + '&body=' + encodeURIComponent(body);
-    window.location.href = mailtoLink;
-
     var btn = f.querySelector('button');
     var original = btn.textContent;
-    btn.textContent = 'Đã Mở Email ✓';
-    btn.style.opacity = '0.75';
-    setTimeout(function(){ btn.textContent = original; btn.style.opacity = '1'; }, 3000);
+
+    function openMailFallback(){
+      var subject = 'Dang ky tham du - Hoi Khoa 2003-2006 - ' + hoten;
+      var body =
+        'Ho va ten: ' + hoten + '\n' +
+        'Lop nien khoa 2003-2006: ' + (lop || '(khong ghi)') + '\n' +
+        'So dien thoai: ' + sdt + '\n' +
+        'So nguoi tham du: ' + soluong + '\n' +
+        'Ghi chu: ' + (ghichu || '(khong co)');
+      window.location.href = 'mailto:khanhdesignvn@gmail.com?subject=' + encodeURIComponent(subject) + '&body=' + encodeURIComponent(body);
+      btn.textContent = 'Đã mở email dự phòng ✓';
+      setTimeout(function(){ btn.textContent = original; btn.disabled = false; }, 3000);
+    }
+
+    btn.textContent = 'Đang gửi…';
+    btn.disabled = true;
+
+    fetch(REGISTER_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ hoten: hoten, lop: lop, sdt: sdt, soluong: soluong, ghichu: ghichu })
+    })
+    .then(function(r){ return r.json(); })
+    .then(function(res){
+      if (res.ok && !res.duplicate) {
+        btn.textContent = '✅ Đăng ký thành công!';
+        f.reset();
+      } else if (res.duplicate) {
+        btn.textContent = '⚠️ SĐT này đã đăng ký rồi';
+      } else {
+        btn.textContent = 'Lỗi: ' + (res.error || 'thử lại');
+      }
+      setTimeout(function(){ btn.textContent = original; btn.disabled = false; }, 3500);
+    })
+    .catch(function(){ openMailFallback(); });
   });
 </script>
 
