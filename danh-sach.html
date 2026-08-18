@@ -154,45 +154,65 @@ function formatDate(iso){
   }catch(e){ return ''; }
 }
 
-fetch('./registrations.json?t=' + Date.now())
-  .then(r => r.json())
-  .then(data => {
-    data.sort((a,b) => new Date(b.date) - new Date(a.date));
+var lastSignature = '';
 
-    document.getElementById('statCount').textContent = data.length;
-    const totalPeople = data.reduce((sum,e) => sum + parseSoLuong(e.soluong), 0);
-    document.getElementById('statPeople').textContent = totalPeople;
-    const classes = new Set(data.map(e => (e.lop||'').trim()).filter(Boolean));
-    document.getElementById('statClasses').textContent = classes.size;
+function render(data){
+  data.sort((a,b) => new Date(b.date) - new Date(a.date));
 
-    const listBody = document.getElementById('listBody');
-    document.getElementById('loadingMsg').remove();
+  document.getElementById('statCount').textContent = data.length;
+  const totalPeople = data.reduce((sum,e) => sum + parseSoLuong(e.soluong), 0);
+  document.getElementById('statPeople').textContent = totalPeople;
+  const classes = new Set(data.map(e => (e.lop||'').trim()).filter(Boolean));
+  document.getElementById('statClasses').textContent = classes.size;
 
-    if(data.length === 0){
-      const empty = document.createElement('div');
-      empty.className = 'empty-state';
-      empty.textContent = 'Chưa có đăng ký nào.';
-      listBody.appendChild(empty);
-    } else {
-      data.forEach(e => {
-        const row = document.createElement('div');
-        row.className = 'row';
-        row.innerHTML =
-          '<div class="name">' + (e.name||'') + '</div>' +
-          '<div class="lop">' + (e.lop||'—') + '</div>' +
-          '<div class="phone">' + (e.sdt||'') + '</div>' +
-          '<div class="soluong">' + (e.soluong||'1 người') + '</div>' +
-          '<div class="time">' + formatDate(e.date) + '</div>';
-        listBody.appendChild(row);
-      });
-    }
+  const listBody = document.getElementById('listBody');
+  const loadingMsg = document.getElementById('loadingMsg');
+  if (loadingMsg) loadingMsg.remove();
 
-    document.getElementById('updatedAt').textContent = 'CẬP NHẬT LẦN CUỐI: ' + new Date().toLocaleString('vi-VN');
-  })
-  .catch(err => {
-    document.getElementById('loadingMsg').textContent = 'Không tải được dữ liệu — kiểm tra file registrations.json';
-    console.error(err);
-  });
+  // Xóa các dòng cũ, giữ lại dòng tiêu đề (head-row)
+  listBody.querySelectorAll('.row:not(.head-row)').forEach(function(r){ r.remove(); });
+
+  if(data.length === 0){
+    const empty = document.createElement('div');
+    empty.className = 'empty-state';
+    empty.textContent = 'Chưa có đăng ký nào.';
+    listBody.appendChild(empty);
+  } else {
+    data.forEach(e => {
+      const row = document.createElement('div');
+      row.className = 'row';
+      row.innerHTML =
+        '<div class="name">' + (e.name||'') + '</div>' +
+        '<div class="lop">' + (e.lop||'—') + '</div>' +
+        '<div class="phone">' + (e.sdt||'') + '</div>' +
+        '<div class="soluong">' + (e.soluong||'1 người') + '</div>' +
+        '<div class="time">' + formatDate(e.date) + '</div>';
+      listBody.appendChild(row);
+    });
+  }
+
+  document.getElementById('updatedAt').textContent = 'CẬP NHẬT LẦN CUỐI: ' + new Date().toLocaleString('vi-VN');
+}
+
+function loadData(){
+  fetch('./registrations.json?t=' + Date.now())
+    .then(r => r.json())
+    .then(data => {
+      const sig = JSON.stringify(data);
+      if (sig !== lastSignature){
+        lastSignature = sig;
+        render(data);
+      }
+    })
+    .catch(err => {
+      const loadingMsg = document.getElementById('loadingMsg');
+      if (loadingMsg) loadingMsg.textContent = 'Không tải được dữ liệu — đang thử lại…';
+      console.error(err);
+    });
+}
+
+loadData();
+setInterval(loadData, 30000);  // tự cập nhật mỗi 30 giây
 </script>
 </body>
 </html>
