@@ -953,23 +953,62 @@
 
 <section id="anh-da-gui">
   <style>
-    .photo-log-table{width:100%;border-collapse:collapse;background:var(--cream);border-radius:12px;overflow:hidden;box-shadow:0 2px 14px rgba(15,42,94,.07);font-size:15px;}
-    .photo-log-table th{background:var(--navy);color:#fff;padding:11px 14px;text-align:left;font-weight:600;font-size:13px;letter-spacing:.02em;}
-    .photo-log-table td{padding:11px 14px;border-top:1px solid var(--cream-deep);color:var(--navy-ink);}
-    .photo-log-table tr:nth-child(even) td{background:var(--cream-deep);}
-    .photo-log-table .count{font-weight:700;color:var(--gold);text-align:center;white-space:nowrap;}
-    .photo-log-table .time{font-size:13px;color:var(--navy-soft);white-space:nowrap;}
-    .photo-log-empty{text-align:center;color:var(--navy-soft);font-size:14px;padding:12px;}
+    #memory-line{position:relative; padding-top:6px;}
+    .rope-track{position:relative; height:250px; overflow:hidden; margin-bottom:6px;
+      -webkit-mask-image:linear-gradient(90deg, transparent 0, #000 60px, #000 calc(100% - 60px), transparent 100%);
+      mask-image:linear-gradient(90deg, transparent 0, #000 60px, #000 calc(100% - 60px), transparent 100%);}
+    .rope{position:absolute; left:0; right:0; top:34px; height:3px;
+      background:linear-gradient(90deg, var(--gold), var(--gold-bright), var(--gold));
+      box-shadow:0 1px 0 rgba(184,137,46,.35);}
+    .rope::before, .rope::after{content:''; position:absolute; top:-4px; width:11px; height:11px; border-radius:50%;
+      background:var(--navy); box-shadow:inset 0 -2px 0 rgba(255,255,255,.15);}
+    .rope::before{left:20px;} .rope::after{right:20px;}
+    .film-strip{display:flex; gap:56px; align-items:flex-start; width:max-content; animation:drift 42s linear infinite; padding-left:20px;}
+    .rope-track:hover .film-strip{animation-play-state:paused;}
+    @keyframes drift{from{transform:translateX(0);} to{transform:translateX(-50%);}}
+    .peg{position:relative; flex:0 0 auto; display:flex; flex-direction:column; align-items:center; cursor:pointer;
+      transform-origin:top center; animation:sway 4.5s ease-in-out infinite;}
+    .peg:nth-child(3n){animation-duration:5.2s;}
+    .peg:nth-child(3n+1){animation-duration:3.8s; animation-delay:-1.1s;}
+    .peg:nth-child(3n+2){animation-duration:4.9s; animation-delay:-2.3s;}
+    @keyframes sway{0%,100%{transform:rotate(var(--tilt,-3deg));} 50%{transform:rotate(calc(var(--tilt,-3deg) * -1));}}
+    .clip{width:16px; height:22px; margin-bottom:-6px; z-index:2; background:var(--navy); border-radius:3px 3px 8px 8px;
+      box-shadow:0 2px 3px rgba(15,42,94,.35); position:relative;}
+    .clip::after{content:''; position:absolute; left:50%; top:6px; width:2px; height:10px; background:rgba(255,255,255,.25); transform:translateX(-50%);}
+    .polaroid{background:var(--paper); padding:10px 10px 34px; border-radius:3px;
+      box-shadow:0 10px 22px rgba(15,42,94,.16), 0 2px 4px rgba(15,42,94,.1); width:168px;
+      transition:transform .35s ease, box-shadow .35s ease;}
+    .peg:hover .polaroid{transform:scale(1.08) rotate(0deg) translateY(-4px); box-shadow:0 18px 34px rgba(15,42,94,.24);}
+    .polaroid img{display:block; width:100%; height:150px; object-fit:cover; border-radius:1px; background:var(--cream-deep);}
+    .polaroid .cap{margin-top:10px; text-align:center; font-family:var(--font-mono); font-size:11px; letter-spacing:.03em; color:var(--navy-soft);}
+    .hint{text-align:center; margin-top:26px; font-family:var(--font-mono); font-size:12px; color:var(--text-muted); letter-spacing:.04em;}
+    #lightbox{position:fixed; inset:0; background:rgba(10,29,66,.88); display:none; align-items:center; justify-content:center; z-index:50; padding:40px;}
+    #lightbox.open{display:flex;}
+    #lightbox figure{background:var(--paper); padding:14px 14px 40px; border-radius:4px; max-width:min(80vw,520px); box-shadow:0 30px 60px rgba(0,0,0,.4);}
+    #lightbox img{width:100%; max-height:60vh; object-fit:cover; display:block;}
+    #lightbox figcaption{text-align:center; margin-top:14px; font-family:var(--font-mono); font-size:12.5px; color:var(--navy-soft);}
+    #lightbox .close{position:absolute; top:24px; right:32px; color:#fff; font-family:var(--font-mono); font-size:13px; letter-spacing:.1em; cursor:pointer; opacity:.75;}
+    #lightbox .close:hover{opacity:1;}
+    @media (prefers-reduced-motion: reduce){.film-strip{animation:none;} .peg{animation:none !important;}}
   </style>
-  <div class="wrap" style="max-width:720px;">
+  <div class="wrap">
     <div class="section-head center">
       <span class="eyebrow" style="justify-content:center;">Album</span>
       <h2>Ảnh Kỷ Niệm Đã Gửi</h2>
-      <p>Những tấm ảnh xưa các bạn gửi về sẽ được ghép vào album chung của khóa.</p>
+      <p>Những tấm ảnh xưa được treo lên đây — <em>lướt qua, dừng lại, nhấn để xem to</em>.</p>
     </div>
-    <div id="photo-log" style="overflow-x:auto;"></div>
   </div>
+  <div id="memory-line"></div>
+  <p class="hint">Rê chuột để dừng · Chạm vào ảnh để phóng to</p>
 </section>
+
+<div id="lightbox">
+  <span class="close" onclick="closeLightbox()">ĐÓNG ✕</span>
+  <figure>
+    <img id="lbImg" src="" alt="">
+    <figcaption id="lbCap"></figcaption>
+  </figure>
+</div>
 
 <section id="faq">
   <div class="wrap" style="max-width:800px;">
@@ -1195,44 +1234,71 @@
     });
   }
 
-  // Hiển thị danh sách ảnh kỷ niệm đã gửi (đọc photo-log.json)
-  function esc(s){
-    return String(s == null ? '' : s).replace(/[&<>"']/g, function(c){
-      return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];
-    });
+  // Dây phơi ký ức — ảnh ngẫu nhiên từ photos.json, chia đều 3 hàng
+  var tilts = [-4, 3, -2, 5, -5, 2, -3, 4];
+  function openLightbox(p){
+    document.getElementById('lbImg').src = p.src;
+    document.getElementById('lbCap').textContent = p.cap;
+    document.getElementById('lightbox').classList.add('open');
   }
-  function loadPhotoLog(){
-    var el = document.getElementById('photo-log');
+  window.closeLightbox = function(){
+    document.getElementById('lightbox').classList.remove('open');
+  };
+  var lb = document.getElementById('lightbox');
+  if (lb) lb.addEventListener('click', function(e){
+    if (e.target.id === 'lightbox') closeLightbox();
+  });
+
+  function buildMemoryLine(){
+    var el = document.getElementById('memory-line');
     if (!el) return;
-    fetch('photo-log.json', {cache:'no-store'})
+    fetch('photos.json', {cache:'no-store'})
       .then(function(r){ return r.json(); })
       .then(function(list){
         if (!Array.isArray(list) || !list.length){
-          el.innerHTML = '<p class="photo-log-empty">Chưa có ảnh nào được gửi. Hãy là người đầu tiên! 📸</p>';
+          el.innerHTML = '<p class="hint" style="margin-top:0;">Chưa có ảnh nào — hãy gửi ảnh kỷ niệm của bạn nhé! 📸</p>';
           return;
         }
-        var rows = list.slice().reverse().map(function(x){
-          var t = new Date(x.time);
-          var tstr = isNaN(t.getTime()) ? (x.time || '—')
-            : t.toLocaleString('vi-VN', {day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit'});
-          return '<tr>' +
-            '<td>' + esc(x.name) + '</td>' +
-            '<td>' + esc(x.lop || '—') + '</td>' +
-            '<td class="count">' + (x.count || 0) + '</td>' +
-            '<td class="time">' + esc(tstr) + '</td>' +
-          '</tr>';
-        }).join('');
-        el.innerHTML =
-          '<table class="photo-log-table"><thead><tr>' +
-          '<th>Người gửi</th><th>Lớp chuyên</th><th>Số ảnh</th><th>Thời gian gửi</th>' +
-          '</tr></thead><tbody>' + rows + '</tbody></table>';
+        var shuffled = list.slice().sort(function(){ return Math.random() - 0.5; });
+        var MAX = 90;
+        var photos = shuffled.slice(0, Math.min(MAX, shuffled.length));
+        var rows = [[], [], []];
+        photos.forEach(function(p, i){ rows[i % 3].push(p); });
+        el.innerHTML = '';
+        rows.forEach(function(row){
+          if (!row.length) return;
+          var track = document.createElement('div');
+          track.className = 'rope-track';
+          track.innerHTML = '<div class="rope"></div><div class="film-strip"></div>';
+          var strip = track.querySelector('.film-strip');
+          function render(set){
+            set.forEach(function(p, i){
+              var peg = document.createElement('div');
+              peg.className = 'peg';
+              peg.style.setProperty('--tilt', tilts[i % tilts.length] + 'deg');
+              var clip = document.createElement('div');
+              clip.className = 'clip';
+              var pol = document.createElement('div');
+              pol.className = 'polaroid';
+              var img = document.createElement('img');
+              img.src = p.src; img.alt = p.cap; img.loading = 'lazy';
+              var cap = document.createElement('div');
+              cap.className = 'cap'; cap.textContent = p.cap;
+              pol.appendChild(img); pol.appendChild(cap);
+              peg.appendChild(clip); peg.appendChild(pol);
+              peg.addEventListener('click', function(){ openLightbox(p); });
+              strip.appendChild(peg);
+            });
+          }
+          render(row); render(row); // nhân đôi để cuộn vô hạn mượt
+          el.appendChild(track);
+        });
       })
       .catch(function(){
-        el.innerHTML = '<p class="photo-log-empty">Chưa có ảnh nào được gửi.</p>';
+        el.innerHTML = '<p class="hint" style="margin-top:0;">Chưa có ảnh nào.</p>';
       });
   }
-  loadPhotoLog();
-  setInterval(loadPhotoLog, 60000);
+  buildMemoryLine();
 </script>
 
 </body>

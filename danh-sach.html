@@ -197,6 +197,11 @@ function parseSoLuong(s){
   const m = (s||'').match(/\d+/);
   return m ? parseInt(m[0],10) : 1;
 }
+function esc(s){
+  return String(s == null ? '' : s).replace(/[&<>"']/g, function(c){
+    return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];
+  });
+}
 function formatDate(iso){
   try{
     const d = new Date(iso);
@@ -232,10 +237,10 @@ function render(data){
         const lop = (e.lop || '').trim();
         item.innerHTML =
           '<span class="w-emoji">🎉</span>' +
-          '<span class="w-text"><b>' + (e.name || '') + '</b>' +
-          (lop ? ' <span class="w-lop">(' + lop + ')</span>' : '') +
+          '<span class="w-text"><b>' + esc(e.name) + '</b>' +
+          (lop ? ' <span class="w-lop">(' + esc(lop) + ')</span>' : '') +
           ' vừa đăng ký tham dự hội khóa!</span>' +
-          '<span class="w-time">' + formatDate(e.date) + '</span>';
+          '<span class="w-time">' + esc(formatDate(e.date)) + '</span>';
         welcomeList.appendChild(item);
       });
     }
@@ -267,16 +272,16 @@ function render(data){
       const members = groups[lop];
       const ch = document.createElement('div');
       ch.className = 'class-head';
-      ch.innerHTML = '<span>' + lop + '</span><span class="cnt">' + members.length + ' lượt · ' + members.reduce((s,e)=>s+parseSoLuong(e.soluong),0) + ' người</span>';
+      ch.innerHTML = '<span>' + esc(lop) + '</span><span class="cnt">' + members.length + ' lượt · ' + members.reduce((s,e)=>s+parseSoLuong(e.soluong),0) + ' người</span>';
       listBody.appendChild(ch);
       members.forEach(e => {
         const row = document.createElement('div');
         row.className = 'row';
         row.innerHTML =
-          '<div class="name">' + (e.name||'') + '</div>' +
-          '<div class="phone">' + (e.sdt||'') + '</div>' +
-          '<div class="soluong">' + (e.soluong||'1 người') + '</div>' +
-          '<div class="time">' + formatDate(e.date) + '</div>';
+          '<div class="name">' + esc(e.name) + '</div>' +
+          '<div class="phone">' + esc(e.sdt) + '</div>' +
+          '<div class="soluong">' + esc(e.soluong || '1 người') + '</div>' +
+          '<div class="time">' + esc(formatDate(e.date)) + '</div>';
         listBody.appendChild(row);
       });
     });

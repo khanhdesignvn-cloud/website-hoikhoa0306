@@ -142,13 +142,5 @@
     "soluong": "1 người",
     "ghichu": "",
     "date": "2026-08-18T18:43:56.684171+07:00"
-  },
-  {
-    "name": "alert(1)Kiểm Tra XSS",
-    "lop": "Chuyên Lý",
-    "sdt": "0999999998",
-    "soluong": "1 người",
-    "ghichu": "test",
-    "date": "2026-08-18T19:47:47.230029+07:00"
   }
 ]
