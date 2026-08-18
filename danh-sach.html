@@ -61,7 +61,7 @@
     background:var(--paper); border:1px solid var(--line); border-radius:0 0 var(--radius) var(--radius); overflow:hidden;
   }
   .row{
-    display:grid; grid-template-columns:1fr 140px 160px 90px 1fr; gap:16px; align-items:center;
+    display:grid; grid-template-columns:1fr 160px 90px 1fr; gap:16px; align-items:center;
     padding:18px 24px; border-bottom:1px solid var(--line);
   }
   .row:last-child{border-bottom:none;}
@@ -78,6 +78,12 @@
     border:1px solid var(--line); padding:4px 10px; border-radius:999px; text-align:center; white-space:nowrap;
   }
   .row .time{font-family:var(--font-mono); font-size:11.5px; color:var(--text-muted); text-align:right;}
+  .class-head{
+    display:flex; justify-content:space-between; align-items:center; gap:12px;
+    background:var(--navy-soft); color:#fff;
+    padding:11px 24px; font-family:var(--font-mono); font-size:12.5px; letter-spacing:0.06em; text-transform:uppercase;
+  }
+  .class-head .cnt{color:rgba(255,255,255,0.75); font-size:11.5px; letter-spacing:0.02em;}
   .empty-state{padding:60px 24px; text-align:center; color:var(--text-muted); font-style:italic;}
 footer{background:var(--navy-ink); color:rgba(255,255,255,0.7); padding:40px 0; text-align:center; font-size:13px;}
   footer .updated{font-family:var(--font-mono); font-size:11px; margin-top:8px; color:rgba(255,255,255,0.45);}
@@ -130,7 +136,7 @@ footer{background:var(--navy-ink); color:rgba(255,255,255,0.7); padding:40px 0; 
     <div class="list-head">Chi Tiết Đăng Ký</div>
     <div class="list" id="listBody">
       <div class="row head-row">
-        <div>Họ và tên</div><div>Lớp</div><div>Số điện thoại</div><div>Số người</div><div style="text-align:right;">Thời gian</div>
+        <div>Họ và tên</div><div>Số điện thoại</div><div>Số người</div><div style="text-align:right;">Thời gian</div>
       </div>
       <div class="empty-state" id="loadingMsg">Đang tải dữ liệu…</div>
     </div>
@@ -170,7 +176,7 @@ function render(data){
   if (loadingMsg) loadingMsg.remove();
 
   // Xóa các dòng cũ, giữ lại dòng tiêu đề (head-row)
-  listBody.querySelectorAll('.row:not(.head-row)').forEach(function(r){ r.remove(); });
+  listBody.querySelectorAll('.row:not(.head-row), .class-head').forEach(function(r){ r.remove(); });
 
   if(data.length === 0){
     const empty = document.createElement('div');
@@ -178,16 +184,31 @@ function render(data){
     empty.textContent = 'Chưa có đăng ký nào.';
     listBody.appendChild(empty);
   } else {
+    // Nhóm theo lớp
+    const groups = {};
     data.forEach(e => {
-      const row = document.createElement('div');
-      row.className = 'row';
-      row.innerHTML =
-        '<div class="name">' + (e.name||'') + '</div>' +
-        '<div class="lop">' + (e.lop||'—') + '</div>' +
-        '<div class="phone">' + (e.sdt||'') + '</div>' +
-        '<div class="soluong">' + (e.soluong||'1 người') + '</div>' +
-        '<div class="time">' + formatDate(e.date) + '</div>';
-      listBody.appendChild(row);
+      const lop = (e.lop || '').trim() || 'Chưa rõ lớp';
+      if (!groups[lop]) groups[lop] = [];
+      groups[lop].push(e);
+    });
+    const keys = Object.keys(groups).sort(function(a,b){ return a.localeCompare(b, 'vi'); });
+
+    keys.forEach(lop => {
+      const members = groups[lop];
+      const ch = document.createElement('div');
+      ch.className = 'class-head';
+      ch.innerHTML = '<span>' + lop + '</span><span class="cnt">' + members.length + ' lượt · ' + members.reduce((s,e)=>s+parseSoLuong(e.soluong),0) + ' người</span>';
+      listBody.appendChild(ch);
+      members.forEach(e => {
+        const row = document.createElement('div');
+        row.className = 'row';
+        row.innerHTML =
+          '<div class="name">' + (e.name||'') + '</div>' +
+          '<div class="phone">' + (e.sdt||'') + '</div>' +
+          '<div class="soluong">' + (e.soluong||'1 người') + '</div>' +
+          '<div class="time">' + formatDate(e.date) + '</div>';
+        listBody.appendChild(row);
+      });
     });
   }
 
