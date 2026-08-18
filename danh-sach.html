@@ -92,6 +92,24 @@
   }
   .flip .num{font-family:var(--font-mono); font-weight:700; font-size:32px; color:var(--navy); display:block;}
   .flip .lbl{font-family:var(--font-mono); font-size:10px; letter-spacing:0.12em; text-transform:uppercase; color:var(--text-muted); margin-top:6px; display:block;}
+  .welcome-box{
+    background:var(--paper); border:1px solid var(--line); border-radius:var(--radius);
+    padding:20px 24px; margin-bottom:44px;
+  }
+  .welcome-title{
+    font-family:var(--font-mono); font-size:12px; letter-spacing:0.08em; text-transform:uppercase;
+    color:var(--gold); margin-bottom:12px;
+  }
+  .welcome-item{
+    display:flex; align-items:baseline; gap:10px; padding:9px 0; border-bottom:1px solid var(--line);
+    font-size:14.5px; line-height:1.5;
+  }
+  .welcome-item:last-child{border-bottom:none;}
+  .welcome-item .w-emoji{flex-shrink:0;}
+  .welcome-item .w-text{color:var(--navy-ink);}
+  .welcome-item .w-text b{color:var(--navy);}
+  .welcome-item .w-lop{color:var(--navy-soft); font-size:13.5px;}
+  .welcome-item .w-time{font-family:var(--font-mono); font-size:11px; color:var(--text-muted); margin-left:auto; white-space:nowrap;}
   .empty-state{padding:60px 24px; text-align:center; color:var(--text-muted); font-style:italic;}
 footer{background:var(--navy-ink); color:rgba(255,255,255,0.7); padding:40px 0; text-align:center; font-size:13px;}
   footer .updated{font-family:var(--font-mono); font-size:11px; margin-top:8px; color:rgba(255,255,255,0.45);}
@@ -138,6 +156,11 @@ footer{background:var(--navy-ink); color:rgba(255,255,255,0.7); padding:40px 0; 
       <div class="num" id="statClasses">–</div>
       <div class="lbl">Lớp khác nhau</div>
     </div>
+  </div>
+
+  <div class="welcome-box" id="welcomeBox">
+    <div class="welcome-title">🎉 Chào đón thành viên mới</div>
+    <div id="welcomeList"></div>
   </div>
 
   <section>
@@ -191,6 +214,32 @@ function render(data){
   document.getElementById('statPeople').textContent = totalPeople;
   const classes = new Set(data.map(e => (e.lop||'').trim()).filter(Boolean));
   document.getElementById('statClasses').textContent = classes.size;
+
+  // Chào đón thành viên mới (3 người gần nhất)
+  const welcomeList = document.getElementById('welcomeList');
+  if (welcomeList) {
+    welcomeList.innerHTML = '';
+    if (data.length === 0) {
+      const empty = document.createElement('div');
+      empty.className = 'empty-state';
+      empty.style.padding = '10px 0';
+      empty.textContent = 'Chưa có đăng ký nào.';
+      welcomeList.appendChild(empty);
+    } else {
+      data.slice(0, 3).forEach(e => {
+        const item = document.createElement('div');
+        item.className = 'welcome-item';
+        const lop = (e.lop || '').trim();
+        item.innerHTML =
+          '<span class="w-emoji">🎉</span>' +
+          '<span class="w-text"><b>' + (e.name || '') + '</b>' +
+          (lop ? ' <span class="w-lop">(' + lop + ')</span>' : '') +
+          ' vừa đăng ký tham dự hội khóa!</span>' +
+          '<span class="w-time">' + formatDate(e.date) + '</span>';
+        welcomeList.appendChild(item);
+      });
+    }
+  }
 
   const listBody = document.getElementById('listBody');
   const loadingMsg = document.getElementById('loadingMsg');

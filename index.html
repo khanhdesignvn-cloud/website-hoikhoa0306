@@ -503,6 +503,7 @@
       <a href="#thay-co">Thầy Cô</a>
       <a href="#dia-diem">Địa Điểm</a>
       <a href="#dang-ky">Đăng Ký</a>
+      <a href="#gui-anh">Gửi Ảnh</a>
     </nav>
     <div style="display:flex; gap:10px; align-items:center;">
       <a href="tel:0983293171" class="btn btn-ghost contact-btn">📞 Huyền Hân Hoan · 0983293171</a>
@@ -892,6 +893,33 @@
   </div>
 </section>
 
+<section id="gui-anh">
+  <div class="wrap" style="max-width:620px;">
+    <div class="section-head center">
+      <span class="eyebrow" style="justify-content:center;">Kỷ niệm</span>
+      <h2>Gửi Ảnh Kỷ Niệm</h2>
+      <p>Gửi những tấm ảnh xưa của bạn để Ban Liên Lạc ghép vào album chung của khóa 2003 – 2006.</p>
+    </div>
+    <form class="rsvp-form" id="photo-form" onsubmit="return false;">
+      <div class="field">
+        <label>Họ và tên</label>
+        <input type="text" name="hoten" placeholder="Nguyễn Văn A" required>
+      </div>
+      <div class="field">
+        <label>Lớp chuyên</label>
+        <input type="text" name="chuyen" placeholder="VD: Chuyên Sinh" required>
+      </div>
+      <div class="field">
+        <label>Chọn ảnh (có thể chọn nhiều tấm cùng lúc)</label>
+        <input type="file" name="photos" accept="image/*" multiple required
+               style="padding:12px; background:var(--cream); border:1px dashed var(--navy-soft); border-radius:8px; width:100%; cursor:pointer;">
+      </div>
+      <button class="btn btn-primary" type="submit">📸 Gửi Ảnh</button>
+      <p class="form-note" id="photo-status">Ảnh sẽ được lưu tự động vào Google Drive của Ban Liên Lạc.</p>
+    </form>
+  </div>
+</section>
+
 <section id="faq">
   <div class="wrap" style="max-width:800px;">
     <div class="section-head">
@@ -1047,6 +1075,69 @@
     })
     .catch(function(){ openMailFallback(); });
   });
+
+  // Gửi ảnh kỷ niệm -> Google Drive (hỗ trợ nhiều ảnh)
+  var PHOTO_SCRIPT_URL = 'PASTE_YOUR_APPS_SCRIPT_URL_HERE';
+
+  function readFileAsDataURL(file){
+    return new Promise(function(resolve, reject){
+      var fr = new FileReader();
+      fr.onload = function(){ resolve(fr.result); };
+      fr.onerror = function(){ reject(new Error('Không đọc được file')); };
+      fr.readAsDataURL(file);
+    });
+  }
+
+  var photoForm = document.getElementById('photo-form');
+  if (photoForm) {
+    photoForm.addEventListener('submit', function(e){
+      e.preventDefault();
+      var f = this;
+      var name = f.hoten.value.trim();
+      var chuyen = f.chuyen.value.trim();
+      var fileInput = f.querySelector('input[type="file"]');
+      var files = fileInput ? fileInput.files : [];
+      var status = document.getElementById('photo-status');
+      var btn = f.querySelector('button');
+      var original = btn.textContent;
+
+      if (!name || !chuyen) { status.textContent = 'Vui lòng điền họ tên và lớp chuyên.'; return; }
+      if (!files || files.length === 0) { status.textContent = 'Vui lòng chọn ít nhất 1 ảnh.'; return; }
+
+      btn.textContent = 'Đang gửi…';
+      btn.disabled = true;
+      status.textContent = 'Đang tải ' + files.length + ' ảnh lên…';
+
+      var readers = [];
+      for (var i = 0; i < files.length; i++) readers.push(readFileAsDataURL(files[i]));
+
+      Promise.all(readers).then(function(results){
+        var fileList = results.map(function(r, idx){
+          return {
+            fileData: r.split(',')[1],
+            mimeType: files[idx].type || 'image/jpeg',
+            filename: files[idx].name
+          };
+        });
+        return fetch(PHOTO_SCRIPT_URL, {
+          method: 'POST',
+          mode: 'no-cors',
+          headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+          body: JSON.stringify({ name: name, chuyen: chuyen, files: fileList })
+        });
+      }).then(function(){
+        btn.textContent = '✅ Đã gửi ' + files.length + ' ảnh!';
+        status.textContent = 'Ảnh đã lưu vào Google Drive. Cảm ơn bạn!';
+        f.reset();
+      }).catch(function(){
+        btn.textContent = original;
+        btn.disabled = false;
+        status.textContent = 'Lỗi gửi ảnh — thử lại nhé.';
+      }).finally(function(){
+        setTimeout(function(){ btn.textContent = original; btn.disabled = false; }, 4500);
+      });
+    });
+  }
 </script>
 
 </body>
