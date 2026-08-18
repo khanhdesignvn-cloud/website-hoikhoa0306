@@ -84,6 +84,14 @@
     padding:11px 24px; font-family:var(--font-mono); font-size:12.5px; letter-spacing:0.06em; text-transform:uppercase;
   }
   .class-head .cnt{color:rgba(255,255,255,0.75); font-size:11.5px; letter-spacing:0.02em;}
+  .countdown{display:flex; gap:16px; justify-content:center; flex-wrap:wrap;}
+  .flip{
+    background:var(--paper); border:1px solid var(--line); border-radius:12px;
+    padding:16px 18px 12px; min-width:78px; text-align:center;
+    box-shadow:0 10px 22px -14px rgba(15,42,94,0.3);
+  }
+  .flip .num{font-family:var(--font-mono); font-weight:700; font-size:32px; color:var(--navy); display:block;}
+  .flip .lbl{font-family:var(--font-mono); font-size:10px; letter-spacing:0.12em; text-transform:uppercase; color:var(--text-muted); margin-top:6px; display:block;}
   .empty-state{padding:60px 24px; text-align:center; color:var(--text-muted); font-style:italic;}
 footer{background:var(--navy-ink); color:rgba(255,255,255,0.7); padding:40px 0; text-align:center; font-size:13px;}
   footer .updated{font-family:var(--font-mono); font-size:11px; margin-top:8px; color:rgba(255,255,255,0.45);}
@@ -142,6 +150,19 @@ footer{background:var(--navy-ink); color:rgba(255,255,255,0.7); padding:40px 0; 
     </div>
   </section>
 </div>
+
+<section style="padding:60px 0 20px; text-align:center;">
+  <div class="wrap" style="text-align:center;">
+    <span class="eyebrow" style="justify-content:center;">Sắp đến rồi</span>
+    <h2 style="font-size:clamp(24px,3.2vw,32px); margin-top:14px; margin-bottom:30px; font-family:var(--font-display);">Chỉ còn từng này thời gian nữa thôi</h2>
+    <div class="countdown" id="countdown">
+      <div class="flip"><span class="num" id="cd-days">00</span><span class="lbl">Ngày</span></div>
+      <div class="flip"><span class="num" id="cd-hours">00</span><span class="lbl">Giờ</span></div>
+      <div class="flip"><span class="num" id="cd-mins">00</span><span class="lbl">Phút</span></div>
+      <div class="flip"><span class="num" id="cd-secs">00</span><span class="lbl">Giây</span></div>
+    </div>
+  </div>
+</section>
 
 <footer>
   <p>Ban Liên Lạc Khóa 2003 – 2006 · "Unlock" Thanh Xuân</p>
@@ -234,6 +255,23 @@ function loadData(){
 
 loadData();
 setInterval(loadData, 30000);  // tự cập nhật mỗi 30 giây
+
+// Countdown đến ngày hội ngộ
+var eventDate = new Date("2026-08-30T07:30:00+07:00").getTime();
+function updateCountdown(){
+  var now = new Date().getTime();
+  var diff = Math.max(0, eventDate - now);
+  var d = Math.floor(diff / (1000*60*60*24));
+  var h = Math.floor((diff % (1000*60*60*24)) / (1000*60*60));
+  var m = Math.floor((diff % (1000*60*60)) / (1000*60));
+  var s = Math.floor((diff % (1000*60)) / 1000);
+  document.getElementById('cd-days').textContent = String(d).padStart(2,'0');
+  document.getElementById('cd-hours').textContent = String(h).padStart(2,'0');
+  document.getElementById('cd-mins').textContent = String(m).padStart(2,'0');
+  document.getElementById('cd-secs').textContent = String(s).padStart(2,'0');
+}
+updateCountdown();
+setInterval(updateCountdown, 1000);
 </script>
 </body>
 </html>
