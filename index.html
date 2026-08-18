@@ -1077,7 +1077,7 @@
   });
 
   // Gửi ảnh kỷ niệm -> Google Drive (hỗ trợ nhiều ảnh)
-  var PHOTO_SCRIPT_URL = 'PASTE_YOUR_APPS_SCRIPT_URL_HERE';
+  var PHOTO_SCRIPT_URL = 'https://sense-sega-referring-got.trycloudflare.com/upload-photo';
 
   function readFileAsDataURL(file){
     return new Promise(function(resolve, reject){
@@ -1121,14 +1121,19 @@
         });
         return fetch(PHOTO_SCRIPT_URL, {
           method: 'POST',
-          mode: 'no-cors',
-          headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+          headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ name: name, chuyen: chuyen, files: fileList })
-        });
-      }).then(function(){
-        btn.textContent = '✅ Đã gửi ' + files.length + ' ảnh!';
-        status.textContent = 'Ảnh đã lưu vào Google Drive. Cảm ơn bạn!';
-        f.reset();
+        }).then(function(r){ return r.json(); });
+      }).then(function(res){
+        if (res && res.ok) {
+          btn.textContent = '✅ Đã gửi ' + (res.saved || files.length) + ' ảnh!';
+          status.textContent = 'Ảnh đã lưu vào Google Drive. Cảm ơn bạn!';
+          f.reset();
+        } else {
+          btn.textContent = original;
+          btn.disabled = false;
+          status.textContent = 'Lỗi: ' + ((res && res.error) || 'thử lại');
+        }
       }).catch(function(){
         btn.textContent = original;
         btn.disabled = false;
