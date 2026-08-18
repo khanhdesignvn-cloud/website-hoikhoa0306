@@ -940,6 +940,26 @@
   </div>
 </section>
 
+<section id="anh-da-gui">
+  <style>
+    .photo-log-table{width:100%;border-collapse:collapse;background:var(--cream);border-radius:12px;overflow:hidden;box-shadow:0 2px 14px rgba(15,42,94,.07);font-size:15px;}
+    .photo-log-table th{background:var(--navy);color:#fff;padding:11px 14px;text-align:left;font-weight:600;font-size:13px;letter-spacing:.02em;}
+    .photo-log-table td{padding:11px 14px;border-top:1px solid var(--cream-deep);color:var(--navy-ink);}
+    .photo-log-table tr:nth-child(even) td{background:var(--cream-deep);}
+    .photo-log-table .count{font-weight:700;color:var(--gold);text-align:center;white-space:nowrap;}
+    .photo-log-table .time{font-size:13px;color:var(--navy-soft);white-space:nowrap;}
+    .photo-log-empty{text-align:center;color:var(--navy-soft);font-size:14px;padding:12px;}
+  </style>
+  <div class="wrap" style="max-width:720px;">
+    <div class="section-head center">
+      <span class="eyebrow" style="justify-content:center;">Album</span>
+      <h2>Ảnh Kỷ Niệm Đã Gửi</h2>
+      <p>Những tấm ảnh xưa các bạn gửi về sẽ được ghép vào album chung của khóa.</p>
+    </div>
+    <div id="photo-log" style="overflow-x:auto;"></div>
+  </div>
+</section>
+
 <section id="faq">
   <div class="wrap" style="max-width:800px;">
     <div class="section-head">
@@ -1163,6 +1183,45 @@
       });
     });
   }
+
+  // Hiển thị danh sách ảnh kỷ niệm đã gửi (đọc photo-log.json)
+  function esc(s){
+    return String(s == null ? '' : s).replace(/[&<>"']/g, function(c){
+      return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];
+    });
+  }
+  function loadPhotoLog(){
+    var el = document.getElementById('photo-log');
+    if (!el) return;
+    fetch('photo-log.json', {cache:'no-store'})
+      .then(function(r){ return r.json(); })
+      .then(function(list){
+        if (!Array.isArray(list) || !list.length){
+          el.innerHTML = '<p class="photo-log-empty">Chưa có ảnh nào được gửi. Hãy là người đầu tiên! 📸</p>';
+          return;
+        }
+        var rows = list.slice().reverse().map(function(x){
+          var t = new Date(x.time);
+          var tstr = isNaN(t.getTime()) ? (x.time || '—')
+            : t.toLocaleString('vi-VN', {day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit'});
+          return '<tr>' +
+            '<td>' + esc(x.name) + '</td>' +
+            '<td>' + esc(x.lop || '—') + '</td>' +
+            '<td class="count">' + (x.count || 0) + '</td>' +
+            '<td class="time">' + esc(tstr) + '</td>' +
+          '</tr>';
+        }).join('');
+        el.innerHTML =
+          '<table class="photo-log-table"><thead><tr>' +
+          '<th>Người gửi</th><th>Lớp chuyên</th><th>Số ảnh</th><th>Thời gian gửi</th>' +
+          '</tr></thead><tbody>' + rows + '</tbody></table>';
+      })
+      .catch(function(){
+        el.innerHTML = '<p class="photo-log-empty">Chưa có ảnh nào được gửi.</p>';
+      });
+  }
+  loadPhotoLog();
+  setInterval(loadPhotoLog, 60000);
 </script>
 
 </body>
