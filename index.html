@@ -519,7 +519,7 @@
       <a href="#dang-ky" class="btn btn-primary">Đăng ký tham dự</a>
       <a href="danh-sach.html" class="btn btn-ghost">📋 DS tham dự</a>
       <a class="share-btn fb" href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fkhanhdesignvn-cloud.github.io%2Fwebsite-hoikhoa0306%2F" target="_blank" rel="noopener" title="Chia sẻ Facebook" aria-label="Chia sẻ Facebook"><svg viewBox="0 0 24 24"><path d="M22 12a10 10 0 1 0-11.56 9.88v-6.99H7.9V12h2.54V9.8c0-2.5 1.5-3.87 3.78-3.87 1.1 0 2.24.2 2.24.2v2.46h-1.26c-1.24 0-1.63.77-1.63 1.56V12h2.78l-.44 2.89h-2.34v6.99A10 10 0 0 0 22 12z"/></svg></a>
-      <a class="share-btn zalo" href="https://sp.zalo.me/share?u=https%3A%2F%2Fkhanhdesignvn-cloud.github.io%2Fwebsite-hoikhoa0306%2F" target="_blank" rel="noopener" title="Chia sẻ Zalo" aria-label="Chia sẻ Zalo"><span class="z-text">Zalo</span></a>
+      <a class="share-btn zalo" href="https://zalo.me/share?u=https%3A%2F%2Fkhanhdesignvn-cloud.github.io%2Fwebsite-hoikhoa0306%2F" target="_blank" rel="noopener" title="Chia sẻ Zalo" aria-label="Chia sẻ Zalo"><span class="z-text">Zalo</span></a>
     </div>
   </div>
 </header>
@@ -1076,7 +1076,7 @@
       </div>
       <div class="foot-links" style="display:flex;gap:10px;align-items:center;">
         <a class="share-btn fb" href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fkhanhdesignvn-cloud.github.io%2Fwebsite-hoikhoa0306%2F" target="_blank" rel="noopener" title="Chia sẻ Facebook" aria-label="Chia sẻ Facebook"><svg viewBox="0 0 24 24"><path d="M22 12a10 10 0 1 0-11.56 9.88v-6.99H7.9V12h2.54V9.8c0-2.5 1.5-3.87 3.78-3.87 1.1 0 2.24.2 2.24.2v2.46h-1.26c-1.24 0-1.63.77-1.63 1.56V12h2.78l-.44 2.89h-2.34v6.99A10 10 0 0 0 22 12z"/></svg></a>
-        <a class="share-btn zalo" href="https://sp.zalo.me/share?u=https%3A%2F%2Fkhanhdesignvn-cloud.github.io%2Fwebsite-hoikhoa0306%2F" target="_blank" rel="noopener" title="Chia sẻ Zalo" aria-label="Chia sẻ Zalo"><span class="z-text">Zalo</span></a>
+        <a class="share-btn zalo" href="https://zalo.me/share?u=https%3A%2F%2Fkhanhdesignvn-cloud.github.io%2Fwebsite-hoikhoa0306%2F" target="_blank" rel="noopener" title="Chia sẻ Zalo" aria-label="Chia sẻ Zalo"><span class="z-text">Zalo</span></a>
       </div>
     </div>
     <div class="foot-bottom">
@@ -1244,6 +1244,17 @@
       });
     });
   }
+
+  // Nút chia sẻ FB/Zalo — luôn chia sẻ đúng trang hiện tại
+  (function(){
+    var u = encodeURIComponent(location.href);
+    document.querySelectorAll('.share-btn.fb').forEach(function(a){
+      a.href = 'https://www.facebook.com/sharer/sharer.php?u=' + u;
+    });
+    document.querySelectorAll('.share-btn.zalo').forEach(function(a){
+      a.href = 'https://zalo.me/share?u=' + u;
+    });
+  })();
 
   // Dây phơi ký ức — ảnh ngẫu nhiên từ photos.json, chia đều 3 hàng
   var tilts = [-4, 3, -2, 5, -5, 2, -3, 4];
