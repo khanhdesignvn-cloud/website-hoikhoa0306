@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Thư mời thầy cô — Hội khóa 2003–2006</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Source+Serif+4:ital,wght@0,400;0,600;1,400&family=IBM+Plex+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --cream:#FAF5E8;
+    --paper:#FFFDF8;
+    --navy:#0F2A5E;
+    --navy-ink:#0A1D42;
+    --navy-soft:#2C4D8A;
+    --gold:#B8892E;
+    --gold-bright:#D8AE4F;
+    --muted:#6E6555;
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  body{
+    background:#E9E1CF;
+    font-family:'Source Serif 4', Georgia, serif;
+    color:var(--navy-ink);
+    -webkit-print-color-adjust:exact;
+    print-color-adjust:exact;
+  }
+
+  /* ── Toolbar (màn hình) ── */
+  .toolbar{
+    position:sticky; top:0; z-index:10;
+    display:flex; align-items:center; gap:14px;
+    padding:14px 22px;
+    background:var(--navy-ink); color:#fff;
+    font-family:'IBM Plex Mono', monospace; font-size:13px;
+  }
+  .toolbar b{letter-spacing:0.05em;}
+  .toolbar .sp{flex:1;}
+  .toolbar a.btn{
+    background:var(--gold-bright); color:var(--navy-ink);
+    padding:9px 16px; border-radius:8px; font-weight:700;
+    text-decoration:none; cursor:pointer; letter-spacing:0.03em;
+  }
+  .toolbar a.ghost{background:transparent; color:#fff; border:1px solid rgba(255,255,255,0.4);}
+  .toolbar a.btn:hover{filter:brightness(1.06);}
+
+  /* ── Khung trang in ── */
+  .stack{display:flex; flex-direction:column; align-items:center; gap:28px; padding:28px 12px 60px;}
+
+  .sheet{
+    width:210mm; min-height:297mm;
+    background:var(--paper);
+    position:relative;
+    box-shadow:0 6px 26px rgba(10,29,66,0.18);
+    border-radius:3px;
+    overflow:hidden;
+    display:flex; flex-direction:column;
+  }
+
+  /* Viền vàng kép */
+  .frame{position:absolute; inset:10mm; border:1.5px solid var(--gold); pointer-events:none;}
+  .frame::before{content:''; position:absolute; inset:2.6mm; border:0.5px solid rgba(184,137,46,0.55);}
+  .frame .corner{
+    position:absolute; width:16px; height:16px;
+    border:2.5px solid var(--gold-bright);
+  }
+  .frame .c1{top:-1.5px; left:-1.5px; border-right:none; border-bottom:none;}
+  .frame .c2{top:-1.5px; right:-1.5px; border-left:none; border-bottom:none;}
+  .frame .c3{bottom:-1.5px; left:-1.5px; border-right:none; border-top:none;}
+  .frame .c4{bottom:-1.5px; right:-1.5px; border-left:none; border-top:none;}
+
+  .pad{padding:26mm 22mm 20mm; display:flex; flex-direction:column; flex:1;}
+
+  /* Mặt trước */
+  .mono{font-family:'IBM Plex Mono', monospace;}
+  .school{
+    text-align:center; font-size:11.5px; letter-spacing:0.22em;
+    text-transform:uppercase; color:var(--navy); font-weight:500;
+  }
+  .school .divider{display:block; width:52px; height:1px; background:var(--gold); margin:7px auto;}
+  .khoa{
+    text-align:center; font-size:10.5px; letter-spacing:0.28em;
+    text-transform:uppercase; color:var(--muted); margin-top:6px;
+  }
+  .title{
+    font-family:'Fraunces', Georgia, serif;
+    text-align:center; font-weight:700; color:var(--navy-ink);
+    font-size:64px; letter-spacing:0.06em; line-height:1;
+    margin-top:26px;
+  }
+  .title .accent{color:var(--gold);}
+  .theme{
+    text-align:center; font-style:italic; color:var(--navy-soft);
+    font-size:16px; margin-top:14px; font-family:'Fraunces', serif;
+  }
+  .body-col{
+    margin-top:30px; text-align:center; font-size:15.5px; line-height:1.85; color:var(--navy-ink);
+  }
+  .kidear{
+    font-size:18px; font-weight:600; color:var(--navy);
+    font-family:'Fraunces', serif; letter-spacing:0.02em;
+  }
+  .kidear .big{font-size:22px;}
+  .whenwhere{
+    margin-top:26px; display:flex; flex-direction:column; gap:9px; align-items:center;
+  }
+  .ww{
+    display:flex; align-items:center; gap:9px; font-size:14.5px; color:var(--navy-ink);
+  }
+  .ww .ico{color:var(--gold); font-size:15px;}
+  .ww b{font-weight:600;}
+  .note{
+    margin-top:22px; font-style:italic; color:var(--muted); font-size:14px; text-align:center;
+  }
+  .sign{
+    margin-top:auto; text-align:center; padding-top:18px;
+    font-size:13px; letter-spacing:0.18em; text-transform:uppercase; color:var(--navy);
+  }
+  .sign .sig-line{display:inline-block; width:180px; border-top:1px solid var(--navy); margin-top:14px; padding-top:6px;}
+
+  /* Mặt sau */
+  .back-head{
+    font-family:'Fraunces', serif; font-weight:700; color:var(--navy-ink);
+    font-size:30px; letter-spacing:0.04em; text-align:center;
+  }
+  .back-head .accent{color:var(--gold);}
+  .back-sub{text-align:center; color:var(--muted); font-size:12.5px; letter-spacing:0.18em; text-transform:uppercase; margin-top:6px;}
+  .prog{ margin-top:22px; }
+  .prog-group-title{
+    font-family:'Fraunces', serif; font-weight:600; color:var(--navy);
+    font-size:15.5px; margin:16px 0 8px;
+    border-bottom:1px solid rgba(184,137,46,0.4); padding-bottom:5px;
+  }
+  .prog-row{
+    display:flex; align-items:baseline; gap:12px; padding:5px 0;
+    font-size:13.5px; color:var(--navy-ink);
+  }
+  .prog-time{font-family:'IBM Plex Mono', monospace; color:var(--gold); font-weight:700; font-size:12.5px; min-width:92px;}
+  .prog-title{font-weight:600;}
+  .contact{
+    margin-top:20px; padding:14px 16px; border:1px dashed rgba(184,137,46,0.55);
+    border-radius:8px; font-size:12.5px; color:var(--muted); text-align:center; line-height:1.7;
+  }
+  .contact b{color:var(--navy);}
+
+  /* ── In ── */
+  @page{ size:A4 portrait; margin:0; }
+  @media print{
+    body{background:#fff;}
+    .toolbar{display:none !important;}
+    .stack{padding:0; gap:0;}
+    .sheet{
+      width:210mm; height:297mm; min-height:297mm;
+      box-shadow:none; border-radius:0;
+      page-break-after:always; break-after:page;
+    }
+    .sheet:last-child{page-break-after:auto; break-after:auto;}
+  }
+</style>
+</head>
+<body>
+
+<div class="toolbar">
+  <b>THƯ MỜI THẦY CÔ — 2 MẶT</b>
+  <span class="sp"></span>
+  <a class="btn ghost" href="index.html">← Về trang chủ</a>
+  <a class="btn" onclick="window.print()">🖨️ In thư mời (2 mặt)</a>
+</div>
+
+<div class="stack">
+
+  <!-- ═══════════ MẶT TRƯỚC ═══════════ -->
+  <section class="sheet">
+    <div class="frame">
+      <span class="corner c1"></span><span class="corner c2"></span>
+      <span class="corner c3"></span><span class="corner c4"></span>
+    </div>
+    <div class="pad">
+      <div class="school mono">Trường THPT Chuyên Lê Quý Đôn — Quảng Trị<span class="divider"></span></div>
+      <div class="khoa mono">Hội khóa niên khóa 2003 – 2006</div>
+
+      <h1 class="title">THƯ <span class="accent">MỜI</span></h1>
+      <p class="theme">"Unlock Thanh Xuân" — 20 năm, một lần mở khóa lại ký ức</p>
+
+      <div class="body-col">
+        <p class="kidear">Trân trọng kính mời<br><span class="big">Quý Thầy / Quý Cô</span></p>
+        <p style="margin-top:14px;">
+          về chung vui cùng hội khóa trong ngày hội ngộ đặc biệt,<br>
+          nơi những ký ức dưới mái trường Chuyên Lê Quý Đôn<br>
+          được mở khóa lại trọn vẹn sau 20 năm xa cách.
+        </p>
+      </div>
+
+      <div class="whenwhere">
+        <div class="ww"><span class="ico">🗓️</span> <span><b>Chủ nhật, ngày 30 tháng 08 năm 2026</b> — bắt đầu 07:30</span></div>
+        <div class="ww"><span class="ico">🏫</span> <span>Buổi sáng: <b>Sân trường THPT Chuyên Lê Quý Đôn</b></span></div>
+        <div class="ww"><span class="ico">🍽️</span> <span>Tiệc hội ngộ: <b>Nhà hàng Moonlight 2</b> — Trần Bình Trọng, Nam Đông Hà</span></div>
+      </div>
+
+      <p class="note">Sự hiện diện của Quý Thầy Cô là niềm vinh hạnh và món quà quý giá nhất đối với cả khóa.</p>
+
+      <div class="sign mono">Thay mặt ban tổ chức<span class="sig-line">Ban tổ chức Hội khóa</span></div>
+    </div>
+  </section>
+
+  <!-- ═══════════ MẶT SAU ═══════════ -->
+  <section class="sheet">
+    <div class="frame">
+      <span class="corner c1"></span><span class="corner c2"></span>
+      <span class="corner c3"></span><span class="corner c4"></span>
+    </div>
+    <div class="pad">
+      <h2 class="back-head">CHƯƠNG TRÌNH <span class="accent">HỘI NGỘ</span></h2>
+      <p class="back-sub mono">Chủ nhật · 30.08.2026 · Trường Chuyên → Moonlight 2</p>
+
+      <div class="prog">
+        <div class="prog-group-title">I. Buổi sáng — Trở về mái trường</div>
+        <div class="prog-row"><span class="prog-time">07:30 – 08:30</span><span class="prog-title">Gặp mặt, nhận phù hiệu &amp; áo đồng phục</span></div>
+        <div class="prog-row"><span class="prog-time">08:30 – 09:00</span><span class="prog-title">Trao quà cho nhà trường</span></div>
+        <div class="prog-row"><span class="prog-time">09:00 – 09:20</span><span class="prog-title">Chụp ảnh kỷ niệm toàn khóa</span></div>
+        <div class="prog-row"><span class="prog-time">09:15 – 09:30</span><span class="prog-title">Di chuyển sang nhà hàng Moonlight 2</span></div>
+
+        <div class="prog-group-title">II. Chương trình hội ngộ — Moonlight 2</div>
+        <div class="prog-row"><span class="prog-time">09:45 – 10:00</span><span class="prog-title">Đón thầy cô, ổn định tổ chức</span></div>
+        <div class="prog-row"><span class="prog-time">10:00 – 10:15</span><span class="prog-title">Giới thiệu chương trình</span></div>
+        <div class="prog-row"><span class="prog-time">10:15 – 10:30</span><span class="prog-title">Video "20 năm, ngày trở về"</span></div>
+        <div class="prog-row"><span class="prog-time">10:30 – 10:45</span><span class="prog-title">Lễ tri ân — tặng hoa, quà thầy cô</span></div>
+        <div class="prog-row"><span class="prog-time">10:45 – 11:00</span><span class="prog-title">Phát biểu (BGH &amp; ban liên lạc)</span></div>
+        <div class="prog-row"><span class="prog-time">11:00 – 11:20</span><span class="prog-title">Văn nghệ giao lưu</span></div>
+        <div class="prog-row"><span class="prog-time">11:20 – 12:00</span><span class="prog-title">Nâng ly, khai tiệc</span></div>
+
+        <div class="prog-group-title">III. Giao lưu, văn nghệ, minigame</div>
+        <div class="prog-row"><span class="prog-time">12:00 – 12:15</span><span class="prog-title">Minigame "Ai nhớ nhất?"</span></div>
+        <div class="prog-row"><span class="prog-time">12:15 trở đi</span><span class="prog-title">Giao lưu tự do — mời thầy cô góp vui</span></div>
+      </div>
+
+      <div class="contact">
+        <b>Liên hệ ban tổ chức</b><br>
+        Đăng ký tham dự &amp; xác nhận có mặt tại website hội khóa,<br>
+        hoặc liên hệ trực tiếp đại diện ban liên lạc của khóa.
+      </div>
+    </div>
+  </section>
+
+</div>
+
+</body>
+</html>
