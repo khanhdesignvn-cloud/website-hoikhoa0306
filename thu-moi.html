@@ -10,6 +10,7 @@
 <style>
   :root{
     --cream:#FAF5E8;
+    --cream-deep:#F1E7CF;
     --paper:#FFFDF8;
     --navy:#0F2A5E;
     --navy-ink:#0A1D42;
@@ -17,36 +18,78 @@
     --gold:#B8892E;
     --gold-bright:#D8AE4F;
     --muted:#6E6555;
+    --font-body:'Source Serif 4', Georgia, serif;
+    --font-display:'Fraunces', Georgia, serif;
+    --font-mono:'IBM Plex Mono', monospace;
   }
   *{box-sizing:border-box; margin:0; padding:0;}
   body{
-    background:#E9E1CF;
-    font-family:'Source Serif 4', Georgia, serif;
+    background:var(--cream);
     color:var(--navy-ink);
+    font-family:var(--font-body);
+    line-height:1.6;
     -webkit-print-color-adjust:exact;
     print-color-adjust:exact;
   }
+  a{color:inherit; text-decoration:none;}
 
-  /* ── Toolbar (màn hình) ── */
-  .toolbar{
-    position:sticky; top:0; z-index:10;
-    display:flex; align-items:center; gap:14px;
-    padding:14px 22px;
-    background:var(--navy-ink); color:#fff;
-    font-family:'IBM Plex Mono', monospace; font-size:13px;
+  /* ── Header (giống trang chủ) ── */
+  header{
+    position:sticky; top:0; z-index:20;
+    background:rgba(250,245,232,0.92); backdrop-filter:blur(8px);
+    border-bottom:1px solid var(--line, rgba(15,42,94,0.12));
   }
-  .toolbar b{letter-spacing:0.05em;}
-  .toolbar .sp{flex:1;}
-  .toolbar a.btn{
-    background:var(--gold-bright); color:var(--navy-ink);
-    padding:9px 16px; border-radius:8px; font-weight:700;
-    text-decoration:none; cursor:pointer; letter-spacing:0.03em;
+  .nav{max-width:1140px; margin:0 auto; padding:14px 22px; display:flex; align-items:center; gap:16px;}
+  .brand{display:flex; align-items:center; gap:11px; font-weight:600; color:var(--navy);}
+  .brand .mark{
+    width:40px; height:40px; border-radius:10px; flex:0 0 auto;
+    background:linear-gradient(135deg,var(--navy-soft),var(--navy));
+    color:#fff; display:flex; align-items:center; justify-content:center;
+    font-family:var(--font-mono); font-weight:700; font-size:13px; letter-spacing:0.02em;
   }
-  .toolbar a.ghost{background:transparent; color:#fff; border:1px solid rgba(255,255,255,0.4);}
-  .toolbar a.btn:hover{filter:brightness(1.06);}
+  .brand small{display:block; font-family:var(--font-mono); font-weight:400; font-size:10.5px; color:var(--muted); letter-spacing:0.04em;}
+  .sp{flex:1;}
+  .btn{
+    display:inline-flex; align-items:center; gap:7px;
+    padding:10px 16px; border-radius:10px; font-weight:600; font-size:14px;
+    cursor:pointer; border:none; font-family:var(--font-body);
+  }
+  .btn-primary{background:var(--navy); color:#fff;}
+  .btn-ghost{background:transparent; color:var(--navy); border:1px solid rgba(15,42,94,0.25);}
+  .btn:hover{filter:brightness(1.07);}
 
-  /* ── Khung trang in ── */
-  .stack{display:flex; flex-direction:column; align-items:center; gap:28px; padding:28px 12px 60px;}
+  /* ── Banner ── */
+  .banner{position:relative; height:260px; overflow:hidden; background:var(--navy);}
+  .banner img{width:100%; height:100%; object-fit:cover; display:block;}
+  .banner .ov{
+    position:absolute; inset:0;
+    background:linear-gradient(180deg, rgba(10,29,66,0.15) 0%, rgba(10,29,66,0.72) 100%);
+    display:flex; flex-direction:column; align-items:center; justify-content:flex-end;
+    padding:0 22px 30px; text-align:center; color:#fff;
+  }
+  .banner .ov h1{font-family:var(--font-display); font-weight:700; font-size:38px; letter-spacing:0.02em; text-shadow:0 2px 14px rgba(0,0,0,0.35);}
+  .banner .ov p{font-size:14px; opacity:0.92; margin-top:6px; font-style:italic;}
+
+  /* ── Panel chọn thầy cô ── */
+  .selector{
+    max-width:1140px; margin:0 auto; padding:22px 22px 4px;
+    display:flex; flex-wrap:wrap; align-items:center; gap:14px;
+  }
+  .selector label{
+    font-family:var(--font-mono); font-size:12px; letter-spacing:0.06em;
+    text-transform:uppercase; color:var(--navy); font-weight:700;
+  }
+  .selector select{
+    flex:1; min-width:260px; padding:12px 14px;
+    font-family:var(--font-body); font-size:15px; color:var(--navy-ink);
+    background:var(--paper); border:1.5px solid rgba(15,42,94,0.28); border-radius:10px;
+    cursor:pointer;
+  }
+  .selector select:focus{outline:none; border-color:var(--gold);}
+  .selector .hint{width:100%; font-size:12.5px; color:var(--muted); font-style:italic;}
+
+  /* ── Khung in ── */
+  .stack{display:flex; flex-direction:column; align-items:center; gap:30px; padding:26px 12px 70px;}
 
   .sheet{
     width:210mm; min-height:297mm;
@@ -57,14 +100,9 @@
     overflow:hidden;
     display:flex; flex-direction:column;
   }
-
-  /* Viền vàng kép */
   .frame{position:absolute; inset:10mm; border:1.5px solid var(--gold); pointer-events:none;}
   .frame::before{content:''; position:absolute; inset:2.6mm; border:0.5px solid rgba(184,137,46,0.55);}
-  .frame .corner{
-    position:absolute; width:16px; height:16px;
-    border:2.5px solid var(--gold-bright);
-  }
+  .frame .corner{position:absolute; width:16px; height:16px; border:2.5px solid var(--gold-bright);}
   .frame .c1{top:-1.5px; left:-1.5px; border-right:none; border-bottom:none;}
   .frame .c2{top:-1.5px; right:-1.5px; border-left:none; border-bottom:none;}
   .frame .c3{bottom:-1.5px; left:-1.5px; border-right:none; border-top:none;}
@@ -72,100 +110,158 @@
 
   .pad{padding:26mm 22mm 20mm; display:flex; flex-direction:column; flex:1;}
 
-  /* Mặt trước */
-  .mono{font-family:'IBM Plex Mono', monospace;}
-  .school{
-    text-align:center; font-size:11.5px; letter-spacing:0.22em;
-    text-transform:uppercase; color:var(--navy); font-weight:500;
-  }
+  .mono{font-family:var(--font-mono);}
+  .school{text-align:center; font-size:11.5px; letter-spacing:0.22em; text-transform:uppercase; color:var(--navy); font-weight:500;}
   .school .divider{display:block; width:52px; height:1px; background:var(--gold); margin:7px auto;}
-  .khoa{
-    text-align:center; font-size:10.5px; letter-spacing:0.28em;
-    text-transform:uppercase; color:var(--muted); margin-top:6px;
-  }
+  .khoa{text-align:center; font-size:10.5px; letter-spacing:0.28em; text-transform:uppercase; color:var(--muted); margin-top:6px;}
   .title{
-    font-family:'Fraunces', Georgia, serif;
-    text-align:center; font-weight:700; color:var(--navy-ink);
-    font-size:64px; letter-spacing:0.06em; line-height:1;
-    margin-top:26px;
+    font-family:var(--font-display); text-align:center; font-weight:700; color:var(--navy-ink);
+    font-size:60px; letter-spacing:0.06em; line-height:1; margin-top:24px;
   }
   .title .accent{color:var(--gold);}
-  .theme{
-    text-align:center; font-style:italic; color:var(--navy-soft);
-    font-size:16px; margin-top:14px; font-family:'Fraunces', serif;
-  }
-  .body-col{
-    margin-top:30px; text-align:center; font-size:15.5px; line-height:1.85; color:var(--navy-ink);
-  }
-  .kidear{
-    font-size:18px; font-weight:600; color:var(--navy);
-    font-family:'Fraunces', serif; letter-spacing:0.02em;
-  }
-  .kidear .big{font-size:22px;}
-  .whenwhere{
-    margin-top:26px; display:flex; flex-direction:column; gap:9px; align-items:center;
-  }
-  .ww{
-    display:flex; align-items:center; gap:9px; font-size:14.5px; color:var(--navy-ink);
-  }
+  .theme{text-align:center; font-style:italic; color:var(--navy-soft); font-size:16px; margin-top:13px; font-family:var(--font-display);}
+  .body-col{margin-top:28px; text-align:center; font-size:15.5px; line-height:1.85; color:var(--navy-ink);}
+  .kidear{font-size:18px; font-weight:600; color:var(--navy); font-family:var(--font-display); letter-spacing:0.02em;}
+  .kidear .big{font-size:23px; color:var(--navy-ink);}
+  .whenwhere{margin-top:24px; display:flex; flex-direction:column; gap:9px; align-items:center;}
+  .ww{display:flex; align-items:center; gap:9px; font-size:14.5px; color:var(--navy-ink);}
   .ww .ico{color:var(--gold); font-size:15px;}
   .ww b{font-weight:600;}
-  .note{
-    margin-top:22px; font-style:italic; color:var(--muted); font-size:14px; text-align:center;
-  }
-  .sign{
-    margin-top:auto; text-align:center; padding-top:18px;
-    font-size:13px; letter-spacing:0.18em; text-transform:uppercase; color:var(--navy);
-  }
+  .note{margin-top:20px; font-style:italic; color:var(--muted); font-size:14px; text-align:center;}
+  .sign{margin-top:auto; text-align:center; padding-top:18px; font-size:13px; letter-spacing:0.18em; text-transform:uppercase; color:var(--navy);}
   .sign .sig-line{display:inline-block; width:180px; border-top:1px solid var(--navy); margin-top:14px; padding-top:6px;}
 
-  /* Mặt sau */
-  .back-head{
-    font-family:'Fraunces', serif; font-weight:700; color:var(--navy-ink);
-    font-size:30px; letter-spacing:0.04em; text-align:center;
-  }
+  .back-head{font-family:var(--font-display); font-weight:700; color:var(--navy-ink); font-size:30px; letter-spacing:0.04em; text-align:center;}
   .back-head .accent{color:var(--gold);}
   .back-sub{text-align:center; color:var(--muted); font-size:12.5px; letter-spacing:0.18em; text-transform:uppercase; margin-top:6px;}
-  .prog{ margin-top:22px; }
+  .prog{margin-top:22px;}
   .prog-group-title{
-    font-family:'Fraunces', serif; font-weight:600; color:var(--navy);
-    font-size:15.5px; margin:16px 0 8px;
+    font-family:var(--font-display); font-weight:600; color:var(--navy); font-size:15.5px; margin:16px 0 8px;
     border-bottom:1px solid rgba(184,137,46,0.4); padding-bottom:5px;
   }
-  .prog-row{
-    display:flex; align-items:baseline; gap:12px; padding:5px 0;
-    font-size:13.5px; color:var(--navy-ink);
-  }
-  .prog-time{font-family:'IBM Plex Mono', monospace; color:var(--gold); font-weight:700; font-size:12.5px; min-width:92px;}
+  .prog-row{display:flex; align-items:baseline; gap:12px; padding:5px 0; font-size:13.5px; color:var(--navy-ink);}
+  .prog-time{font-family:var(--font-mono); color:var(--gold); font-weight:700; font-size:12.5px; min-width:92px;}
   .prog-title{font-weight:600;}
-  .contact{
-    margin-top:20px; padding:14px 16px; border:1px dashed rgba(184,137,46,0.55);
-    border-radius:8px; font-size:12.5px; color:var(--muted); text-align:center; line-height:1.7;
-  }
+  .contact{margin-top:20px; padding:14px 16px; border:1px dashed rgba(184,137,46,0.55); border-radius:8px; font-size:12.5px; color:var(--muted); text-align:center; line-height:1.7;}
   .contact b{color:var(--navy);}
 
   /* ── In ── */
   @page{ size:A4 portrait; margin:0; }
   @media print{
     body{background:#fff;}
-    .toolbar{display:none !important;}
+    header, .banner, .selector{display:none !important;}
     .stack{padding:0; gap:0;}
-    .sheet{
-      width:210mm; height:297mm; min-height:297mm;
-      box-shadow:none; border-radius:0;
-      page-break-after:always; break-after:page;
-    }
+    .sheet{width:210mm; height:297mm; min-height:297mm; box-shadow:none; border-radius:0; page-break-after:always; break-after:page;}
     .sheet:last-child{page-break-after:auto; break-after:auto;}
   }
 </style>
 </head>
 <body>
 
-<div class="toolbar">
-  <b>THƯ MỜI THẦY CÔ — 2 MẶT</b>
-  <span class="sp"></span>
-  <a class="btn ghost" href="index.html">← Về trang chủ</a>
-  <a class="btn" onclick="window.print()">🖨️ In thư mời (2 mặt)</a>
+<header>
+  <div class="nav">
+    <div class="brand">
+      <span class="mark">LQĐ</span>
+      <div>THPT Chuyên Lê Quý Đôn<small>Khóa 2003 – 2006 · Quảng Trị</small></div>
+    </div>
+    <span class="sp"></span>
+    <a href="index.html" class="btn btn-ghost">← Về trang chủ</a>
+    <button class="btn btn-primary" onclick="window.print()">🖨️ In thư mời (2 mặt)</button>
+  </div>
+</header>
+
+<div class="banner">
+  <img src="banner.jpg" alt="Hội khóa 2003–2006">
+  <div class="ov">
+    <h1>Thư mời thầy cô</h1>
+    <p>"Unlock Thanh Xuân" — 20 năm, một lần mở khóa lại ký ức</p>
+  </div>
+</div>
+
+<div class="selector">
+  <label for="teacher">Chọn thầy / cô</label>
+  <select id="teacher">
+    <option value="">Quý Thầy / Quý Cô (không chọn)</option>
+    <optgroup label="Ban giám hiệu">
+      <option>Thầy Nguyễn Văn Nhân</option>
+      <option>Thầy Nguyễn Văn Ninh</option>
+      <option>Cô Nguyễn Thị Hà Ân</option>
+    </optgroup>
+    <optgroup label="Tổ Ngữ Văn">
+      <option>Cô Nguyễn Thị Thanh Mai</option>
+      <option>Cô Lê Thị Lan</option>
+      <option>Cô Nguyễn Thị Thu Hiền</option>
+      <option>Cô Hoàng Thị Phụng</option>
+      <option>Thầy Nguyễn Phú</option>
+    </optgroup>
+    <optgroup label="Tổ Toán">
+      <option>Cô Trương Thị Bé</option>
+      <option>Thầy Nguyễn Văn Hiền</option>
+      <option>Thầy Dương Châu Dinh</option>
+      <option>Thầy Trần Luyến</option>
+      <option>Cô Lê Thị Thương</option>
+      <option>Thầy Lê Đình Thành</option>
+      <option>Cô Nguyễn Thị Nguyệt</option>
+    </optgroup>
+    <optgroup label="Tổ Tin">
+      <option>Cô Đoàn Thị Ái Phương</option>
+      <option>Thầy Hoàng Văn Diệu</option>
+      <option>Thầy Nguyễn Văn Minh</option>
+    </optgroup>
+    <optgroup label="Tổ Lý">
+      <option>Thầy Nguyễn Văn Sáu</option>
+      <option>Thầy Hoàng Nam</option>
+      <option>Thầy Nguyễn Đình Hiền</option>
+      <option>Thầy Lê Chí</option>
+      <option>Thầy Nguyễn Ngọc Hiếu</option>
+      <option>Cô Nguyễn Thị Thanh Nga</option>
+    </optgroup>
+    <optgroup label="Tổ Hóa">
+      <option>Thầy Mai Hoa Cư</option>
+      <option>Thầy Nguyễn Đức Tửu</option>
+      <option>Thầy Phạm Xuân Phúc</option>
+      <option>Cô Hoàng Thị Hương Giang</option>
+      <option>Cô Nguyễn Thị Hạnh</option>
+      <option>Cô Nguyễn Thị Gái</option>
+    </optgroup>
+    <optgroup label="Tổ Sinh">
+      <option>Cô Hà Lệ Chi</option>
+      <option>Cô Lê Thị Lương</option>
+      <option>Thầy Nguyễn Văn Tiềm</option>
+      <option>Thầy Văn Ngọc Sơn</option>
+    </optgroup>
+    <optgroup label="Tổ Anh">
+      <option>Thầy Nguyễn Đình Hạnh</option>
+      <option>Cô Phan Thị Quỳ</option>
+      <option>Cô Nguyễn Thị Minh Hằng</option>
+      <option>Cô Lê Thị Ngọc Trang</option>
+      <option>Cô Võ Thị Linh Hà</option>
+      <option>Cô Hoàng Thị Mỹ Hạnh</option>
+      <option>Cô Nguyễn Thị Phượng</option>
+      <option>Thầy Ngô Quang Minh Hải</option>
+    </optgroup>
+    <optgroup label="Tổ Sử - Địa - GDCD - Thể Dục - Công Nghệ">
+      <option>Cô Lê Thị Song</option>
+      <option>Thầy Nguyễn Viết Thành</option>
+      <option>Cô Đoàn Thị Minh Hương</option>
+      <option>Thầy Tạ Quang Hùng</option>
+      <option>Thầy Đoàn Minh Nhật</option>
+      <option>Cô Hoàng Thị Ngọc Lan</option>
+    </optgroup>
+    <optgroup label="Tổ Văn Phòng - Bảo Vệ">
+      <option>Cô Hoàng Thị Oanh</option>
+      <option>Cô Lê Thị Trâm</option>
+      <option>Cô Hằng</option>
+      <option>Cô Lê Thị Hường</option>
+      <option>Bác Trần Ngọc Điểu</option>
+    </optgroup>
+    <optgroup label="Viếng Thăm">
+      <option>Thầy Trần Đức Sinh</option>
+      <option>Thầy Đoàn Ngọc Hùng</option>
+      <option>Bác Sáu (Bảo Vệ)</option>
+    </optgroup>
+  </select>
+  <div class="hint">Chọn tên thầy/cô để điền trực tiếp vào thư mời, rồi bấm "In thư mời" → chọn in 2 mặt.</div>
 </div>
 
 <div class="stack">
@@ -184,7 +280,7 @@
       <p class="theme">"Unlock Thanh Xuân" — 20 năm, một lần mở khóa lại ký ức</p>
 
       <div class="body-col">
-        <p class="kidear">Trân trọng kính mời<br><span class="big">Quý Thầy / Quý Cô</span></p>
+        <p class="kidear">Trân trọng kính mời<br><span class="big" id="invite-name">Quý Thầy / Quý Cô</span></p>
         <p style="margin-top:14px;">
           về chung vui cùng hội khóa trong ngày hội ngộ đặc biệt,<br>
           nơi những ký ức dưới mái trường Chuyên Lê Quý Đôn<br>
@@ -244,6 +340,14 @@
   </section>
 
 </div>
+
+<script>
+  var sel = document.getElementById('teacher');
+  var nameEl = document.getElementById('invite-name');
+  sel.addEventListener('change', function(){
+    nameEl.textContent = sel.value || 'Quý Thầy / Quý Cô';
+  });
+</script>
 
 </body>
 </html>
