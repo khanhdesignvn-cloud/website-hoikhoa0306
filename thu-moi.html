@@ -141,10 +141,11 @@ const TEACHERS = [
 ];
 
 const SCHEDULE = [
-  ["09:45", "Khai mạc chương trình", "Đón khách, tuyên bố lý do, chiếu phim kỷ niệm"],
-  ["10:30", "Lễ tri ân Thầy Cô", "Tặng hoa, quà tri ân — phát biểu từ nhà trường"],
-  ["11:20", "Tiệc thân mật", "Nâng ly khai tiệc, văn nghệ giao lưu"],
-  ["12:00", "Giao lưu tự do", "Minigame, trò chuyện, hát giao lưu cùng học trò"],
+  ["09h45 – 10h15", "Ổn định tổ chức, giới thiệu chương trình", "Nhà hàng Moonlight 2 – Trần Bình Trọng"],
+  ["10h15 – 10h30", "Video “20 năm – Ngày trở về”", ""],
+  ["10h30 – 11h00", "Tri ân Thầy Cô", ""],
+  ["11h00 – 11h20", "Cùng hát nhau nghe", ""],
+  ["11h20 trở đi", "Nâng ly – Khai tiệc – Minigame", ""],
 ];
 
 function loadImg(src){
@@ -390,21 +391,21 @@ async function drawBack(){
     ctx.fill(); ctx.stroke();
 
     ctx.fillStyle = '#C22A26';
-    ctx.font = '700 36px "Fraunces"';
+    ctx.font = '700 26px "Fraunces"';
     ctx.textAlign = 'left';
-    ctx.fillText(time, rowX+30, cy+52);
+    ctx.fillText(time, rowX+30, cy+50);
 
     ctx.fillStyle = '#0A1D42';
     ctx.font = '600 32px "Source Serif 4"';
-    ctx.fillText(title, rowX+220, cy+46);
+    ctx.fillText(title, rowX+240, cy+46);
 
     ctx.fillStyle = '#6E6555';
     ctx.font = '400 24px "Source Serif 4"';
-    const descLines = wrapText(ctx, desc, rowW-250);
+    const descLines = wrapText(ctx, desc, rowW-270);
     let dy = cy+82;
-    for(const l of descLines.slice(0,2)){ ctx.fillText(l, rowX+220, dy); dy += 30; }
+    for(const l of descLines.slice(0,2)){ ctx.fillText(l, rowX+240, dy); dy += 30; }
 
-    cy += 150;
+    cy += 140;
   }
 
   // footer contact block
@@ -431,7 +432,7 @@ async function drawBack(){
   ctx.textAlign = 'center';
   ctx.fillStyle = '#B8892E';
   ctx.font = 'italic 500 30px "Fraunces"';
-  ctx.fillText('Cảm ơn Thầy Cô đã đồng hành cùng bao thế hệ học trò', cx, cy+220);
+  ctx.fillText('Cảm ơn Thầy Cô đã đồng hành cùng bao thế hệ học trò', cx, cy+170);
 }
 
 function currentName(){
