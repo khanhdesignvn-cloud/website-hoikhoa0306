@@ -25,7 +25,7 @@
     font-family:var(--font-body);
     padding:32px 20px 60px;
   }
-  .wrap{max-width:1200px; margin:0 auto;}
+  .wrap{max-width:1460px; margin:0 auto;}
   header{text-align:center; margin-bottom:28px;}
   header .eyebrow{
     font-family:var(--font-mono); font-size:12px; letter-spacing:0.16em;
@@ -77,7 +77,7 @@
     text-transform:uppercase; color:var(--text-muted); margin-bottom:12px;
   }
   canvas{
-    width:100%; max-width:460px; height:auto;
+    width:100%; max-width:700px; height:auto;
     border-radius:12px; box-shadow:0 24px 50px -24px rgba(15,42,94,0.4);
     border:1px solid var(--line); background:#fff;
   }
@@ -104,6 +104,7 @@
     </div>
     <div class="btn-row">
       <button class="btn btn-primary" id="btnDownloadAll">📄 Xuất PDF (2 Mặt)</button>
+      <button class="btn btn-ghost" id="btnDownloadImages">🖼️ Xuất ảnh (2 mặt)</button>
     </div>
   </div>
 
@@ -446,8 +447,16 @@ function download(canvasId, filename){
   const cv = document.getElementById(canvasId);
   const link = document.createElement('a');
   link.download = filename;
-  link.href = cv.toDataURL('image/png');
+  link.href = cv.toDataURL('image/png', 1.0);
+  document.body.appendChild(link);
   link.click();
+  document.body.removeChild(link);
+}
+
+function downloadImages(){
+  const base = (currentName()||'thay-co').replace(/\s+/g,'-');
+  download('cardFront', 'thiep-moi-' + base + '-mat-truoc.png');
+  setTimeout(function(){ download('cardBack', 'thiep-moi-' + base + '-mat-sau.png'); }, 450);
 }
 
 function downloadBoth(){
@@ -483,6 +492,7 @@ async function init(){
   }
   sel.addEventListener('change', redraw);
   document.getElementById('btnDownloadAll').addEventListener('click', downloadBoth);
+  document.getElementById('btnDownloadImages').addEventListener('click', downloadImages);
 
   [logoImg, emblemImg, qrImg, bannerImg] = await Promise.all([loadImg(LOGO_SRC), loadImg(EMBLEM_SRC), loadImg(QR_SRC), loadImg(BANNER_SRC)]);
 
