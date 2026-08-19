@@ -105,6 +105,7 @@
     <div class="btn-row">
       <button class="btn btn-primary" id="btnDownloadAll">📄 Xuất PDF (2 Mặt)</button>
       <button class="btn btn-ghost" id="btnDownloadImages">🖼️ Xuất ảnh (2 mặt)</button>
+      <button class="btn btn-ghost" id="btnDownloadAllTeachers">🖨️ Tải file in toàn bộ</button>
     </div>
   </div>
 
@@ -459,6 +460,49 @@ function downloadImages(){
   setTimeout(function(){ download('cardBack', 'thiep-moi-' + base + '-mat-sau.png'); }, 450);
 }
 
+function downloadAllPrint(){
+  const btn = document.getElementById('btnDownloadAllTeachers');
+  const orig = btn.textContent;
+  btn.disabled = true;
+  btn.textContent = '⏳ Đang chuẩn bị…';
+  setTimeout(async function(){
+    try{
+      const { jsPDF } = window.jspdf;
+      const pdf = new jsPDF({ unit:'mm', format:'a5', orientation:'portrait' });
+      const pw = pdf.internal.pageSize.getWidth();
+      const ph = pdf.internal.pageSize.getHeight();
+
+      // mặt sau giống nhau cho tất cả — vẽ 1 lần
+      await drawBack();
+      const backData = document.getElementById('cardBack').toDataURL('image/jpeg', 0.9);
+
+      const names = [];
+      for(const [g, list] of TEACHERS){ for(const n of list){ names.push(n); } }
+
+      let first = true;
+      for(let i=0;i<names.length;i++){
+        btn.textContent = '⏳ Đang tạo ' + (i+1) + '/' + names.length;
+        await new Promise(function(r){ setTimeout(r, 30); });
+        await drawFront(names[i]);
+        const frontData = document.getElementById('cardFront').toDataURL('image/jpeg', 0.9);
+        if(first){ pdf.addImage(frontData,'JPEG',0,0,pw,ph); first=false; }
+        else { pdf.addPage('a5','portrait'); pdf.addImage(frontData,'JPEG',0,0,pw,ph); }
+        pdf.addPage('a5','portrait');
+        pdf.addImage(backData,'JPEG',0,0,pw,ph);
+      }
+
+      pdf.save('thiep-moi-toan-bo-thay-co.pdf');
+      btn.textContent = orig;
+    }catch(e){
+      alert('Lỗi tạo file in: ' + (e && e.message ? e.message : e));
+      btn.textContent = orig;
+    }finally{
+      btn.disabled = false;
+      redraw();
+    }
+  }, 60);
+}
+
 function downloadBoth(){
   const base = (currentName()||'thay-co').replace(/\s+/g,'-');
   const front = document.getElementById('cardFront');
@@ -493,6 +537,7 @@ async function init(){
   sel.addEventListener('change', redraw);
   document.getElementById('btnDownloadAll').addEventListener('click', downloadBoth);
   document.getElementById('btnDownloadImages').addEventListener('click', downloadImages);
+  document.getElementById('btnDownloadAllTeachers').addEventListener('click', downloadAllPrint);
 
   [logoImg, emblemImg, qrImg, bannerImg] = await Promise.all([loadImg(LOGO_SRC), loadImg(EMBLEM_SRC), loadImg(QR_SRC), loadImg(BANNER_SRC)]);
 
