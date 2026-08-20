@@ -106,7 +106,7 @@
   <header>
     <span class="eyebrow">Công cụ nội bộ Ban Liên Lạc</span>
     <h1>Tạo Thiệp Mời Thầy Cô</h1>
-    <p>Chọn tên thầy cô — thiệp 2 mặt tự động cập nhật, bấm 1 nút xuất file PDF 2 trang sẵn sàng in.</p>
+    <p>Chọn tên thầy cô — thiệp gấp đôi (mặt trước + mặt sau) tự động cập nhật, bấm 1 nút xuất file in sẵn sàng.</p>
   </header>
 
   <div class="panel">
@@ -115,8 +115,8 @@
       <select id="teacherSelect"></select>
     </div>
     <div class="btn-row">
-      <button class="btn btn-primary" id="btnDownloadAll">📄 Xuất PDF (2 Mặt)</button>
-      <button class="btn btn-ghost" id="btnDownloadImages">🖼️ Xuất ảnh (2 mặt)</button>
+      <button class="btn btn-primary" id="btnDownloadAll">📄 Xuất PDF thiệp</button>
+      <button class="btn btn-ghost" id="btnDownloadImages">🖼️ Xuất ảnh thiệp</button>
       <button class="btn btn-ghost" id="btnDownloadAllTeachers">🖨️ Tải file in toàn bộ</button>
     </div>
     <div class="btn-row" style="margin-top:10px;">
@@ -129,7 +129,7 @@
     <details class="xtab">
       <summary>📰 Chuyên tin</summary>
       <div class="xtab-body">
-        <p>Thiệp mời đã chuyển sang <b>khổ bì thư 1/3 A4</b> (DL 110×220mm, ngang) — chữ to dễ đọc, in vừa phong bì chuẩn.</p>
+        <p>Thiệp mời đã chuyển sang <b>khổ bì thư 1/3 A4 gấp đôi</b> (mặt trước + mặt sau dính nhau như cuốn vở) — chữ to dễ đọc, in vừa phong bì chuẩn.</p>
       </div>
     </details>
     <details class="xtab">
@@ -145,16 +145,12 @@
 
   <div class="cards">
     <div class="card-block">
-      <h3>Mặt Trước</h3>
-      <canvas id="cardFront" width="2598" height="1299"></canvas>
+      <h3>Thiệp gấp đôi (Mặt trước + Mặt sau)</h3>
+      <canvas id="cardFront" width="2598" height="2598"></canvas>
     </div>
     <div class="card-block">
-      <h3>Mặt Sau</h3>
-      <canvas id="cardBack" width="2598" height="1299"></canvas>
-    </div>
-    <div class="card-block">
-      <h3>Phong Bì</h3>
-      <canvas id="cardEnvelope" width="2598" height="1299"></canvas>
+      <h3>Phong Bì (dọc)</h3>
+      <canvas id="cardEnvelope" width="1299" height="2598"></canvas>
     </div>
   </div>
 </div>
@@ -229,266 +225,233 @@ let logoImg, emblemImg, qrImg, bannerImg;
 async function drawFront(name){
   const cv = document.getElementById('cardFront');
   const ctx = cv.getContext('2d');
-  const W = cv.width, H = cv.height;
+  const W = cv.width, H = cv.height;   // 2598 x 2598 (220x220mm gấp đôi)
+  const FOLD = W/2;                     // 1299 — gáy dọc
   ctx.clearRect(0,0,W,H);
-
-  // background
   ctx.fillStyle = '#FAF5E8';
   ctx.fillRect(0,0,W,H);
 
-  // outer + inner gold frame
+  // viền ngoài cả tờ
   ctx.strokeStyle = 'rgba(15,42,94,0.14)';
   ctx.lineWidth = 2;
-  ctx.strokeRect(40,40,W-80,H-80);
-  ctx.strokeStyle = '#B8892E';
+  ctx.strokeRect(18,18,W-36,H-36);
+
+  // đường gấp dọc (gáy như cuốn vở)
+  ctx.setLineDash([14,12]);
+  ctx.strokeStyle = 'rgba(15,42,94,0.30)';
   ctx.lineWidth = 2;
-  ctx.globalAlpha = 0.6;
-  roundRect(ctx,70,70,W-140,H-140,16);
-  ctx.stroke();
-  ctx.globalAlpha = 1;
+  ctx.beginPath(); ctx.moveTo(FOLD, 24); ctx.lineTo(FOLD, H-24); ctx.stroke();
+  ctx.setLineDash([]);
 
-  const lcx = W * 0.30;   // cột trái — nhận diện
-  const rcx = W * 0.70;   // cột phải — lời ngỏ
-
-  // ---- cột trái ----
+  // ===== PANEL TRÁI — MẶT TRƯỚC (bìa) =====
+  const lcx = FOLD/2;   // 649
   ctx.textAlign = 'center';
-  const logoSize = 170;
-  ctx.drawImage(logoImg, lcx-logoSize/2, 100, logoSize, logoSize);
-  let cy = 100 + logoSize + 34;
-
+  const logoSize = 150;
+  ctx.drawImage(logoImg, lcx-logoSize/2, 200, logoSize, logoSize);
+  let cy = 200 + logoSize + 40;
   ctx.fillStyle = '#0F2A5E';
-  ctx.font = '900 90px "Fraunces"';
+  ctx.font = '900 84px "Fraunces"';
   ctx.fillText('THƯ MỜI', lcx, cy);
-  cy += 64;
+  cy += 76;
   ctx.fillStyle = '#B8892E';
-  ctx.font = 'italic 600 38px "Fraunces"';
+  ctx.font = 'italic 600 34px "Fraunces"';
   ctx.fillText('Trân trọng kính mời', lcx, cy);
-
-  cy += 86;
+  cy += 92;
   ctx.fillStyle = '#0A1D42';
-  ctx.font = 'italic 700 54px "Fraunces"';
-  const nameLines = wrapText(ctx, name || 'Quý Thầy Cô', W*0.38);
+  ctx.font = 'italic 700 52px "Fraunces"';
+  const nameLines = wrapText(ctx, name || 'Quý Thầy Cô', FOLD*0.82);
   for(const l of nameLines){ ctx.fillText(l, lcx, cy); cy += 64; }
-
-  cy += 42;
+  cy += 48;
   ctx.fillStyle = '#C22A26';
-  ctx.font = 'italic 700 44px "Fraunces"';
+  ctx.font = 'italic 700 42px "Fraunces"';
   ctx.fillText('“UNLOCK” Thanh Xuân', lcx, cy);
-  cy += 54;
+  cy += 56;
   ctx.fillStyle = '#B8892E';
-  ctx.font = 'italic 600 36px "Fraunces"';
+  ctx.font = 'italic 600 34px "Fraunces"';
   ctx.fillText('20 năm cùng về', lcx, cy);
-  cy += 58;
+  cy += 64;
   ctx.fillStyle = '#0F2A5E';
-  ctx.font = '700 30px "IBM Plex Mono"';
+  ctx.font = '700 28px "IBM Plex Mono"';
   ctx.fillText('NIÊN KHÓA 2003 – 2006', lcx, cy);
-  cy += 42;
+  cy += 44;
   ctx.fillStyle = '#6E6555';
-  ctx.font = '500 26px "IBM Plex Mono"';
-  ctx.fillText('TRƯỜNG THPT CHUYÊN LÊ QUÝ ĐÔN', lcx, cy);
-  cy += 38;
+  ctx.font = '500 24px "IBM Plex Mono"';
+  ctx.fillText('THPT CHUYÊN LÊ QUÝ ĐÔN', lcx, cy);
+  cy += 36;
   ctx.fillText('QUẢNG TRỊ', lcx, cy);
 
-  // ---- cột phải ----
+  // ===== PANEL PHẢI — MẶT SAU (nội dung) =====
+  const rcx = W*0.75;     // 1949
+  const rw = FOLD - 110;  // chiều ngang khả dụng
   ctx.textAlign = 'center';
-  const bodyW = W * 0.34;
-  let ry = 210;
+  let ry = 180;
   ctx.fillStyle = '#0A1D42';
   ctx.font = 'italic 600 40px "Source Serif 4"';
   ctx.fillText('Kính thưa Quý Thầy Cô!', rcx, ry);
-  ry += 60;
+  ry += 64;
   ctx.fillStyle = '#3A3428';
-  ctx.font = '400 36px "Source Serif 4"';
+  ctx.font = '400 30px "Source Serif 4"';
   const paras = [
     'Hai mươi năm — một chặng đường đủ để chúng em trưởng thành và thêm trân quý những bài học Thầy Cô đã trao.',
     'Chúng em trân trọng kính mời Thầy Cô về tham dự chương trình họp khóa, cùng sống lại kỷ niệm một thời áo trắng.'
   ];
   for(const p of paras){
-    const lines = wrapText(ctx, p, bodyW);
-    for(const l of lines){ ctx.fillText(l, rcx, ry); ry += 52; }
+    const lines = wrapText(ctx, p, rw);
+    for(const l of lines){ ctx.fillText(l, rcx, ry); ry += 46; }
     ry += 22;
   }
-  ry += 6;
-  ctx.font = 'italic 500 36px "Source Serif 4"';
+  ry += 8;
+  ctx.font = 'italic 500 32px "Source Serif 4"';
   ctx.fillStyle = '#0F2A5E';
   ctx.fillText('Trân trọng!', rcx, ry);
+  ry += 54;
+  ctx.font = '700 26px "IBM Plex Mono"';
+  ctx.fillText('BAN LIÊN LẠC KHÓA 2003 – 2006', rcx, ry);
+  ry += 58;
 
-  // ---- footer ----
-  ctx.textAlign = 'center';
-  ctx.fillStyle = '#B8892E';
-  ctx.font = 'italic 500 28px "Fraunces"';
-  ctx.fillText('Cảm ơn Thầy Cô — người lái đò thầm lặng đưa bao thế hệ học trò trưởng thành!', W/2, H-110);
-  ctx.font = '600 26px "IBM Plex Mono"';
-  ctx.fillStyle = '#0F2A5E';
-  ctx.fillText('BAN LIÊN LẠC KHÓA 2003 – 2006', W/2, H-64);
-}
-
-async function drawBack(){
-  const cv = document.getElementById('cardBack');
-  const ctx = cv.getContext('2d');
-  const W = cv.width, H = cv.height;
-  ctx.clearRect(0,0,W,H);
-  ctx.fillStyle = '#FAF5E8';
-  ctx.fillRect(0,0,W,H);
-
-  ctx.strokeStyle = 'rgba(15,42,94,0.14)';
-  ctx.lineWidth = 2;
-  ctx.strokeRect(40,40,W-80,H-80);
+  // ngăn cách vàng
   ctx.strokeStyle = '#B8892E';
-  ctx.globalAlpha = 0.6;
-  roundRect(ctx,70,70,W-140,H-140,16);
-  ctx.stroke();
+  ctx.lineWidth = 2;
+  ctx.globalAlpha = 0.5;
+  ctx.beginPath(); ctx.moveTo(FOLD+90, ry); ctx.lineTo(W-90, ry); ctx.stroke();
   ctx.globalAlpha = 1;
+  ry += 42;
 
-  // ---- banner trái ----
-  const bx = 90, by = 95;
-  let bnH = 430;
-  let bnW = bnH * (bannerImg.width / bannerImg.height);
-  if (bnW > 800) { bnW = 800; bnH = 800 * (bannerImg.height / bannerImg.width); }
-  roundRect(ctx, bx, by, bnW, bnH, 10);
-  ctx.save(); ctx.clip();
-  ctx.drawImage(bannerImg, bx, by, bnW, bnH);
-  ctx.restore();
-  ctx.strokeStyle = 'rgba(15,42,94,0.18)';
-  ctx.lineWidth = 1.5;
-  roundRect(ctx, bx, by, bnW, bnH, 10); ctx.stroke();
-
-  // tiêu đề dưới banner
-  ctx.textAlign = 'center';
-  const bCx = bx + bnW/2;
-  let cy = by + bnH + 48;
+  // lịch trình
   ctx.fillStyle = '#C22A26';
-  ctx.font = '700 30px "IBM Plex Mono"';
-  ctx.letterSpacing = '5px';
-  ctx.fillText('LỊCH TRÌNH', bCx, cy);
-  ctx.letterSpacing = '0px';
-  cy += 54;
-  ctx.fillStyle = '#0A1D42';
-  ctx.font = '700 32px "Fraunces"';
-  ctx.fillText('“UNLOCK” THANH XUÂN', bCx, cy);
-  cy += 46;
-  ctx.fillStyle = '#B8892E';
-  ctx.font = 'italic 600 28px "Fraunces"';
-  ctx.fillText('20 năm cùng về', bCx, cy);
-  cy += 44;
-  ctx.fillStyle = '#6E6555';
-  ctx.font = '400 22px "Source Serif 4"';
-  ctx.fillText('Niên khóa 2003 – 2006 · Chủ Nhật 30.08.2026', bCx, cy);
+  ctx.font = '700 28px "IBM Plex Mono"';
+  ctx.fillText('L Ị C H   T R Ì N H', rcx, ry);
+  ry += 54;
 
-  // ---- lịch trình phải (2 cột) ----
-  const sY = 130;
-  const colW = 740;
-  const colX = [940, 1750];
-
-  for(let i=0;i<SCHEDULE.length;i++){
-    const sec = SCHEDULE[i];
-    const sx = colX[i];
-    let sy = sY;
-    ctx.textAlign = 'left';
+  ctx.textAlign = 'left';
+  for(const sec of SCHEDULE){
     ctx.fillStyle = '#C22A26';
-    ctx.font = '700 28px "Fraunces"';
-    ctx.fillText(sec.section, sx, sy);
+    ctx.font = '700 24px "Fraunces"';
+    ctx.fillText(sec.section, FOLD+70, ry);
+    ry += 32;
     ctx.fillStyle = '#6E6555';
     ctx.font = '400 20px "Source Serif 4"';
-    ctx.fillText(sec.loc, sx, sy+30);
-    sy += 52;
-
+    ctx.fillText(sec.loc, FOLD+70, ry);
+    ry += 38;
     for(const [time, title] of sec.items){
       ctx.fillStyle = '#FFFDF8';
       ctx.strokeStyle = 'rgba(15,42,94,0.14)';
       ctx.lineWidth = 1;
-      roundRect(ctx, sx, sy, colW, 88, 10);
+      roundRect(ctx, FOLD+60, ry-22, rw-40, 74, 8);
       ctx.fill(); ctx.stroke();
       ctx.fillStyle = '#C22A26';
-      ctx.font = '700 26px "Fraunces"';
-      ctx.fillText(time, sx+22, sy+34);
+      ctx.font = '700 24px "Fraunces"';
+      ctx.fillText(time, FOLD+84, ry+8);
       ctx.fillStyle = '#0A1D42';
-      ctx.font = '600 30px "Source Serif 4"';
-      ctx.fillText(title, sx+22, sy+72);
-      sy += 100;
+      ctx.font = '600 26px "Source Serif 4"';
+      ctx.fillText(title, FOLD+84, ry+42);
+      ry += 86;
     }
+    ry += 16;
   }
 
-  // ---- footer liên hệ ----
-  ctx.textAlign = 'left';
-  const qrSize = 150;
-  const fy = 970;
-  ctx.drawImage(qrImg, 90, fy, qrSize, qrSize);
-  ctx.fillStyle = '#0F2A5E';
-  ctx.font = '600 34px "Source Serif 4"';
-  ctx.fillText('Liên hệ Ban Tổ Chức', 90+qrSize+30, fy+42);
-  ctx.font = '400 30px "Source Serif 4"';
-  ctx.fillStyle = '#3A3428';
-  ctx.fillText('Huyền Hân Hoan · 0983293171', 90+qrSize+30, fy+92);
-  ctx.font = '400 26px "Source Serif 4"';
-  ctx.fillStyle = '#6E6555';
-  ctx.fillText('Quét mã QR tham gia nhóm Zalo', 90+qrSize+30, fy+134);
-
+  // tri ân + liên hệ + QR
+  ry += 12;
   ctx.textAlign = 'center';
   ctx.fillStyle = '#B8892E';
   ctx.font = 'italic 500 26px "Fraunces"';
-  ctx.fillText('Cảm ơn Thầy Cô đã đồng hành cùng bao thế hệ học trò', W/2, H-60);
+  const tag = wrapText(ctx, 'Cảm ơn Thầy Cô — người lái đò thầm lặng đưa bao thế hệ học trò trưởng thành!', rw);
+  for(const l of tag){ ctx.fillText(l, rcx, ry); ry += 38; }
+  ry += 24;
+
+  const qrSize = 140;
+  ctx.drawImage(qrImg, rcx-qrSize/2, ry, qrSize, qrSize);
+  ry += qrSize + 26;
+  ctx.fillStyle = '#0F2A5E';
+  ctx.font = '600 28px "Source Serif 4"';
+  ctx.fillText('Liên hệ Ban Tổ Chức · Huyền Hân Hoan · 0983293171', rcx, ry);
+  ry += 42;
+  ctx.fillStyle = '#6E6555';
+  ctx.font = '400 24px "Source Serif 4"';
+  ctx.fillText('Quét mã QR tham gia nhóm Zalo', rcx, ry);
 }
 
 async function drawEnvelope(){
   const cv = document.getElementById('cardEnvelope');
   const ctx = cv.getContext('2d');
-  const W = cv.width, H = cv.height;
+  const W = cv.width, H = cv.height;   // 1299 x 2598 (110x220mm dọc)
   ctx.clearRect(0,0,W,H);
 
   // background
   ctx.fillStyle = '#FAF5E8';
   ctx.fillRect(0,0,W,H);
 
-  // outer + inner gold frame
+  // viền
   ctx.strokeStyle = 'rgba(15,42,94,0.14)';
   ctx.lineWidth = 2;
-  ctx.strokeRect(40,40,W-80,H-80);
+  ctx.strokeRect(24,24,W-48,H-48);
   ctx.strokeStyle = '#B8892E';
   ctx.globalAlpha = 0.6;
-  roundRect(ctx,70,70,W-140,H-140,16);
+  roundRect(ctx,44,44,W-88,H-88,16);
   ctx.stroke();
   ctx.globalAlpha = 1;
 
-  // ---- trái: người gửi ----
-  const L = 110;
-  ctx.textAlign = 'left';
-  const logoSize = 130;
-  ctx.drawImage(logoImg, L, 100, logoSize, logoSize);
-  let cy = 100 + logoSize + 30;
+  const cx = W/2;
+  ctx.textAlign = 'center';
+
+  // ---- người gửi (trên) ----
+  const logoSize = 140;
+  ctx.drawImage(logoImg, cx-logoSize/2, 150, logoSize, logoSize);
+  let y = 150 + logoSize + 40;
   ctx.fillStyle = '#0F2A5E';
-  ctx.font = '700 32px "IBM Plex Mono"';
-  ctx.fillText('BAN LIÊN LẠC KHÓA 2003 – 2006', L, cy);
-  cy += 46;
+  ctx.font = '700 30px "IBM Plex Mono"';
+  ctx.fillText('BAN LIÊN LẠC KHÓA 2003 – 2006', cx, y);
+  y += 52;
   ctx.fillStyle = '#3A3428';
-  ctx.font = '400 28px "Source Serif 4"';
-  ctx.fillText('Trường THPT Chuyên Lê Quý Đôn', L, cy);
-  cy += 42;
+  ctx.font = '400 27px "Source Serif 4"';
+  ctx.fillText('Trường THPT Chuyên Lê Quý Đôn', cx, y);
+  y += 44;
+  ctx.fillStyle = '#6E6555';
+  ctx.font = '400 25px "Source Serif 4"';
+  ctx.fillText('Phường Nam Đông Hà · Quảng Trị', cx, y);
+  y += 40;
+  ctx.fillText('ĐT: 0983293171', cx, y);
+
+  // ngăn cách
+  y += 74;
+  ctx.strokeStyle = '#B8892E';
+  ctx.lineWidth = 2;
+  ctx.globalAlpha = 0.5;
+  ctx.beginPath(); ctx.moveTo(120, y); ctx.lineTo(W-120, y); ctx.stroke();
+  ctx.globalAlpha = 1;
+
+  // ---- thông điệp chương trình ----
+  y += 92;
+  ctx.fillStyle = '#C22A26';
+  ctx.font = 'italic 700 58px "Fraunces"';
+  ctx.fillText('“UNLOCK” THANH XUÂN', cx, y);
+  y += 96;
+  ctx.fillStyle = '#B8892E';
+  ctx.font = 'italic 600 40px "Fraunces"';
+  ctx.fillText('20 năm cùng về', cx, y);
+  y += 116;
+  ctx.fillStyle = '#0F2A5E';
+  ctx.font = '700 28px "IBM Plex Mono"';
+  ctx.fillText('NIÊN KHÓA 2003 – 2006', cx, y);
+  y += 52;
+  ctx.fillText('CHỦ NHẬT 30.08.2026', cx, y);
+  y += 70;
   ctx.fillStyle = '#6E6555';
   ctx.font = '400 26px "Source Serif 4"';
-  ctx.fillText('Phường Nam Đông Hà · Quảng Trị', L, cy);
-  cy += 40;
-  ctx.fillText('ĐT: 0983293171', L, cy);
+  ctx.fillText('Moonlight 2 – Đường Trần Bình Trọng', cx, y);
+  y += 40;
+  ctx.fillText('Nam Đông Hà · Quảng Trị', cx, y);
 
-  // ---- phải: thông điệp chương trình ----
-  ctx.textAlign = 'center';
-  const rcx = W * 0.68;
-  let ry = 230;
-  ctx.fillStyle = '#C22A26';
-  ctx.font = 'italic 700 60px "Fraunces"';
-  ctx.fillText('“UNLOCK” THANH XUÂN', rcx, ry);
-  ry += 82;
+  // ---- emblem trang trí + tagline ----
+  y += 130;
+  ctx.globalAlpha = 0.22;
+  ctx.drawImage(emblemImg, cx-150, y, 300, 300);
+  ctx.globalAlpha = 1;
+
   ctx.fillStyle = '#B8892E';
-  ctx.font = 'italic 600 46px "Fraunces"';
-  ctx.fillText('20 năm cùng về', rcx, ry);
-  ry += 96;
-  ctx.fillStyle = '#0F2A5E';
-  ctx.font = '700 32px "IBM Plex Mono"';
-  ctx.fillText('NIÊN KHÓA 2003 – 2006 · CHỦ NHẬT 30.08.2026', rcx, ry);
-  ry += 52;
-  ctx.fillStyle = '#6E6555';
-  ctx.font = '400 28px "Source Serif 4"';
-  ctx.fillText('Moonlight 2 – Đường Trần Bình Trọng · Nam Đông Hà · Quảng Trị', rcx, ry);
+  ctx.font = 'italic 500 24px "Fraunces"';
+  const tag = wrapText(ctx, 'Cảm ơn Thầy Cô đã đồng hành cùng bao thế hệ học trò', W*0.8);
+  for(const l of tag){ ctx.fillText(l, cx, H-140); break; }
 }
 
 function currentName(){
@@ -498,7 +461,6 @@ function currentName(){
 
 async function redraw(){
   await drawFront(currentName());
-  await drawBack();
   await drawEnvelope();
 }
 
@@ -514,8 +476,7 @@ function download(canvasId, filename){
 
 function downloadImages(){
   const base = (currentName()||'thay-co').replace(/\s+/g,'-');
-  download('cardFront', 'thiep-moi-' + base + '-mat-truoc.png');
-  setTimeout(function(){ download('cardBack', 'thiep-moi-' + base + '-mat-sau.png'); }, 450);
+  download('cardFront', 'thiep-moi-' + base + '-gap-doi.png');
 }
 
 function downloadAllPrint(){
@@ -526,13 +487,9 @@ function downloadAllPrint(){
   setTimeout(async function(){
     try{
       const { jsPDF } = window.jspdf;
-      const pdf = new jsPDF({ unit:'mm', format:[220, 110], orientation:'landscape' });
+      const pdf = new jsPDF({ unit:'mm', format:[220, 220], orientation:'portrait' });
       const pw = pdf.internal.pageSize.getWidth();
       const ph = pdf.internal.pageSize.getHeight();
-
-      // mặt sau giống nhau cho tất cả — vẽ 1 lần
-      await drawBack();
-      const backData = document.getElementById('cardBack').toDataURL('image/jpeg', 0.9);
 
       const names = [];
       for(const [g, list] of TEACHERS){ for(const n of list){ names.push(n); } }
@@ -544,9 +501,7 @@ function downloadAllPrint(){
         await drawFront(names[i]);
         const frontData = document.getElementById('cardFront').toDataURL('image/jpeg', 0.9);
         if(first){ pdf.addImage(frontData,'JPEG',0,0,pw,ph); first=false; }
-        else { pdf.addPage([220, 110], 'landscape'); pdf.addImage(frontData,'JPEG',0,0,pw,ph); }
-        pdf.addPage([220, 110], 'landscape');
-        pdf.addImage(backData,'JPEG',0,0,pw,ph);
+        else { pdf.addPage([220, 220], 'portrait'); pdf.addImage(frontData,'JPEG',0,0,pw,ph); }
       }
 
       pdf.save('thiep-moi-toan-bo-thay-co.pdf');
@@ -564,17 +519,14 @@ function downloadAllPrint(){
 function downloadBoth(){
   const base = (currentName()||'thay-co').replace(/\s+/g,'-');
   const front = document.getElementById('cardFront');
-  const back = document.getElementById('cardBack');
 
-  // A5 = 148 x 210 mm
+  // thiệp gấp đôi = 220 x 220 mm
   const { jsPDF } = window.jspdf;
-  const pdf = new jsPDF({ unit: 'mm', format: [220, 110], orientation: 'landscape' });
+  const pdf = new jsPDF({ unit: 'mm', format: [220, 220], orientation: 'portrait' });
   const pw = pdf.internal.pageSize.getWidth();
   const ph = pdf.internal.pageSize.getHeight();
 
   pdf.addImage(front.toDataURL('image/jpeg', 0.95), 'JPEG', 0, 0, pw, ph);
-  pdf.addPage([220, 110], 'landscape');
-  pdf.addImage(back.toDataURL('image/jpeg', 0.95), 'JPEG', 0, 0, pw, ph);
 
   pdf.save('thiep-moi-' + base + '.pdf');
 }
@@ -582,7 +534,7 @@ function downloadBoth(){
 function downloadEnvelopePdf(){
   const env = document.getElementById('cardEnvelope');
   const { jsPDF } = window.jspdf;
-  const pdf = new jsPDF({ unit: 'mm', format: [220, 110], orientation: 'landscape' });
+  const pdf = new jsPDF({ unit: 'mm', format: [110, 220], orientation: 'portrait' });
   const pw = pdf.internal.pageSize.getWidth();
   const ph = pdf.internal.pageSize.getHeight();
   pdf.addImage(env.toDataURL('image/jpeg', 0.95), 'JPEG', 0, 0, pw, ph);
