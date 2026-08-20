@@ -69,7 +69,7 @@
   .btn-row{display:flex; gap:12px; flex-wrap:wrap;}
 
   .cards{
-    display:grid; grid-template-columns:1fr 1fr; gap:28px;
+    display:grid; grid-template-columns:repeat(3, 1fr); gap:24px;
   }
   .card-block{text-align:center;}
   .card-block h3{
@@ -107,6 +107,10 @@
       <button class="btn btn-ghost" id="btnDownloadImages">🖼️ Xuất ảnh (2 mặt)</button>
       <button class="btn btn-ghost" id="btnDownloadAllTeachers">🖨️ Tải file in toàn bộ</button>
     </div>
+    <div class="btn-row" style="margin-top:10px;">
+      <button class="btn btn-primary" id="btnDownloadEnvelopePdf">📮 Xuất phong bì (PDF)</button>
+      <button class="btn btn-ghost" id="btnDownloadEnvelopeImg">🖼️ Xuất phong bì (ảnh)</button>
+    </div>
   </div>
 
   <div class="cards">
@@ -117,6 +121,10 @@
     <div class="card-block">
       <h3>Mặt Sau</h3>
       <canvas id="cardBack" width="1748" height="2480"></canvas>
+    </div>
+    <div class="card-block">
+      <h3>Phong Bì</h3>
+      <canvas id="cardEnvelope" width="1748" height="2480"></canvas>
     </div>
   </div>
 </div>
@@ -451,6 +459,103 @@ async function drawBack(){
   ctx.fillText('Cảm ơn Thầy Cô đã đồng hành cùng bao thế hệ học trò', cx, cy+170);
 }
 
+async function drawEnvelope(name){
+  const cv = document.getElementById('cardEnvelope');
+  const ctx = cv.getContext('2d');
+  const W = cv.width, H = cv.height;
+  ctx.clearRect(0,0,W,H);
+
+  // background
+  ctx.fillStyle = '#FAF5E8';
+  ctx.fillRect(0,0,W,H);
+
+  // outer + inner gold frame
+  ctx.strokeStyle = 'rgba(15,42,94,0.14)';
+  ctx.lineWidth = 2;
+  ctx.strokeRect(70,70,W-140,H-140);
+  ctx.strokeStyle = '#B8892E';
+  ctx.globalAlpha = 0.6;
+  roundRect(ctx,110,110,W-220,H-220,18);
+  ctx.stroke();
+  ctx.globalAlpha = 1;
+
+  const cx = W/2;
+  const L = 200;
+
+  // ---- top-left: người gửi ----
+  ctx.textAlign = 'left';
+  ctx.drawImage(logoImg, L, 190, 150, 150);
+  ctx.fillStyle = '#0F2A5E';
+  ctx.font = '700 30px "IBM Plex Mono"';
+  ctx.fillText('BAN LIÊN LẠC KHÓA 2003 – 2006', L, 400);
+  ctx.fillStyle = '#3A3428';
+  ctx.font = '400 26px "Source Serif 4"';
+  ctx.fillText('Trường THPT Chuyên Lê Quý Đôn', L, 442);
+  ctx.fillStyle = '#6E6555';
+  ctx.font = '400 23px "Source Serif 4"';
+  ctx.fillText('Thành phố Đông Hà · Quảng Trị', L, 478);
+  ctx.fillText('ĐT: 0983293171', L, 512);
+
+  // ---- top-right: ô dán tem ----
+  const stX = W - L - 330, stY = 190, stS = 330;
+  ctx.strokeStyle = 'rgba(15,42,94,0.30)';
+  ctx.lineWidth = 2;
+  ctx.setLineDash([14,12]);
+  roundRect(ctx, stX, stY, stS, stS, 10);
+  ctx.stroke();
+  ctx.setLineDash([]);
+  ctx.fillStyle = 'rgba(15,42,94,0.25)';
+  ctx.font = '500 28px "IBM Plex Mono"';
+  ctx.textAlign = 'center';
+  ctx.fillText('TEM', stX + stS/2, stY + stS/2 + 10);
+
+  // ---- đường phân cách ----
+  const dY = 640;
+  ctx.strokeStyle = 'rgba(15,42,94,0.12)';
+  ctx.lineWidth = 1.5;
+  ctx.beginPath(); ctx.moveTo(L, dY); ctx.lineTo(W-L, dY); ctx.stroke();
+
+  // ---- người nhận (ở giữa) ----
+  ctx.textAlign = 'center';
+  ctx.fillStyle = '#B8892E';
+  ctx.font = 'italic 600 34px "Fraunces"';
+  ctx.fillText('Kính gửi', cx, 780);
+
+  ctx.fillStyle = '#0A1D42';
+  ctx.font = 'italic 700 74px "Fraunces"';
+  const envNameLines = wrapText(ctx, name || 'Quý Thầy Cô', W - 400);
+  let ny = 880;
+  for(const l of envNameLines){ ctx.fillText(l, cx, ny); ny += 88; }
+
+  ctx.fillStyle = '#3A3428';
+  ctx.font = '500 30px "Source Serif 4"';
+  ctx.fillText('Trường THPT Chuyên Lê Quý Đôn', cx, ny + 40);
+  ctx.fillStyle = '#6E6555';
+  ctx.font = '400 26px "Source Serif 4"';
+  ctx.fillText('Thành phố Đông Hà · Quảng Trị', cx, ny + 84);
+
+  // ---- đáy: thông điệp chương trình ----
+  const by = H - 430;
+  ctx.textAlign = 'center';
+  ctx.strokeStyle = '#B8892E';
+  ctx.lineWidth = 2;
+  ctx.beginPath(); ctx.moveTo(cx-140, by); ctx.lineTo(cx+140, by); ctx.stroke();
+
+  ctx.fillStyle = '#C22A26';
+  ctx.font = 'italic 700 46px "Fraunces"';
+  ctx.fillText('“UNLOCK” THANH XUÂN', cx, by + 80);
+  ctx.fillStyle = '#B8892E';
+  ctx.font = 'italic 600 38px "Fraunces"';
+  ctx.fillText('20 năm cùng về', cx, by + 136);
+
+  ctx.fillStyle = '#0F2A5E';
+  ctx.font = '700 27px "IBM Plex Mono"';
+  ctx.fillText('NIÊN KHÓA 2003 – 2006 · CHỦ NHẬT 30.08.2026', cx, by + 206);
+  ctx.fillStyle = '#6E6555';
+  ctx.font = '400 24px "Source Serif 4"';
+  ctx.fillText('Moonlight 2 – Đường Trần Bình Trọng · Nam Đông Hà · Quảng Trị', cx, by + 250);
+}
+
 function currentName(){
   const sel = document.getElementById('teacherSelect');
   return sel.value || '';
@@ -459,6 +564,7 @@ function currentName(){
 async function redraw(){
   await drawFront(currentName());
   await drawBack();
+  await drawEnvelope(currentName());
 }
 
 function download(canvasId, filename){
@@ -538,6 +644,22 @@ function downloadBoth(){
   pdf.save('thiep-moi-' + base + '.pdf');
 }
 
+function downloadEnvelopePdf(){
+  const base = (currentName()||'thay-co').replace(/\s+/g,'-');
+  const env = document.getElementById('cardEnvelope');
+  const { jsPDF } = window.jspdf;
+  const pdf = new jsPDF({ unit: 'mm', format: 'a5', orientation: 'portrait' });
+  const pw = pdf.internal.pageSize.getWidth();
+  const ph = pdf.internal.pageSize.getHeight();
+  pdf.addImage(env.toDataURL('image/jpeg', 0.95), 'JPEG', 0, 0, pw, ph);
+  pdf.save('phong-bi-' + base + '.pdf');
+}
+
+function downloadEnvelopeImg(){
+  const base = (currentName()||'thay-co').replace(/\s+/g,'-');
+  download('cardEnvelope', 'phong-bi-' + base + '.png');
+}
+
 async function init(){
   // populate select
   const sel = document.getElementById('teacherSelect');
@@ -555,6 +677,8 @@ async function init(){
   document.getElementById('btnDownloadAll').addEventListener('click', downloadBoth);
   document.getElementById('btnDownloadImages').addEventListener('click', downloadImages);
   document.getElementById('btnDownloadAllTeachers').addEventListener('click', downloadAllPrint);
+  document.getElementById('btnDownloadEnvelopePdf').addEventListener('click', downloadEnvelopePdf);
+  document.getElementById('btnDownloadEnvelopeImg').addEventListener('click', downloadEnvelopeImg);
 
   [logoImg, emblemImg, qrImg, bannerImg] = await Promise.all([loadImg(LOGO_SRC), loadImg(EMBLEM_SRC), loadImg(QR_SRC), loadImg(BANNER_SRC)]);
 
