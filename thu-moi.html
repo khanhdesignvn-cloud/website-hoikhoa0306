@@ -459,7 +459,7 @@ async function drawBack(){
   ctx.fillText('Cảm ơn Thầy Cô đã đồng hành cùng bao thế hệ học trò', cx, cy+170);
 }
 
-async function drawEnvelope(name){
+async function drawEnvelope(){
   const cv = document.getElementById('cardEnvelope');
   const ctx = cv.getContext('2d');
   const W = cv.width, H = cv.height;
@@ -480,80 +480,51 @@ async function drawEnvelope(name){
   ctx.globalAlpha = 1;
 
   const cx = W/2;
-  const L = 200;
+  ctx.textAlign = 'center';
 
-  // ---- top-left: người gửi ----
-  ctx.textAlign = 'left';
-  ctx.drawImage(logoImg, L, 190, 150, 150);
+  // logo trường (căn giữa)
+  const logoSize = 220;
+  ctx.drawImage(logoImg, cx-logoSize/2, 760, logoSize, logoSize);
+  let cy = 760 + logoSize + 70;
+
+  // người gửi (căn giữa)
   ctx.fillStyle = '#0F2A5E';
-  ctx.font = '700 30px "IBM Plex Mono"';
-  ctx.fillText('BAN LIÊN LẠC KHÓA 2003 – 2006', L, 400);
+  ctx.font = '700 34px "IBM Plex Mono"';
+  ctx.fillText('BAN LIÊN LẠC KHÓA 2003 – 2006', cx, cy);
+  cy += 56;
   ctx.fillStyle = '#3A3428';
-  ctx.font = '400 26px "Source Serif 4"';
-  ctx.fillText('Trường THPT Chuyên Lê Quý Đôn', L, 442);
+  ctx.font = '400 28px "Source Serif 4"';
+  ctx.fillText('Trường THPT Chuyên Lê Quý Đôn', cx, cy);
+  cy += 48;
   ctx.fillStyle = '#6E6555';
-  ctx.font = '400 23px "Source Serif 4"';
-  ctx.fillText('Thành phố Đông Hà · Quảng Trị', L, 478);
-  ctx.fillText('ĐT: 0983293171', L, 512);
+  ctx.font = '400 25px "Source Serif 4"';
+  ctx.fillText('Thành phố Đông Hà · Quảng Trị', cx, cy);
+  cy += 42;
+  ctx.fillText('ĐT: 0983293171', cx, cy);
 
-  // ---- top-right: ô dán tem ----
-  const stX = W - L - 330, stY = 190, stS = 330;
-  ctx.strokeStyle = 'rgba(15,42,94,0.30)';
-  ctx.lineWidth = 2;
-  ctx.setLineDash([14,12]);
-  roundRect(ctx, stX, stY, stS, stS, 10);
-  ctx.stroke();
-  ctx.setLineDash([]);
-  ctx.fillStyle = 'rgba(15,42,94,0.25)';
-  ctx.font = '500 28px "IBM Plex Mono"';
-  ctx.textAlign = 'center';
-  ctx.fillText('TEM', stX + stS/2, stY + stS/2 + 10);
-
-  // ---- đường phân cách ----
-  const dY = 640;
-  ctx.strokeStyle = 'rgba(15,42,94,0.12)';
-  ctx.lineWidth = 1.5;
-  ctx.beginPath(); ctx.moveTo(L, dY); ctx.lineTo(W-L, dY); ctx.stroke();
-
-  // ---- người nhận (ở giữa) ----
-  ctx.textAlign = 'center';
-  ctx.fillStyle = '#B8892E';
-  ctx.font = 'italic 600 34px "Fraunces"';
-  ctx.fillText('Kính gửi', cx, 780);
-
-  ctx.fillStyle = '#0A1D42';
-  ctx.font = 'italic 700 74px "Fraunces"';
-  const envNameLines = wrapText(ctx, name || 'Quý Thầy Cô', W - 400);
-  let ny = 880;
-  for(const l of envNameLines){ ctx.fillText(l, cx, ny); ny += 88; }
-
-  ctx.fillStyle = '#3A3428';
-  ctx.font = '500 30px "Source Serif 4"';
-  ctx.fillText('Trường THPT Chuyên Lê Quý Đôn', cx, ny + 40);
-  ctx.fillStyle = '#6E6555';
-  ctx.font = '400 26px "Source Serif 4"';
-  ctx.fillText('Thành phố Đông Hà · Quảng Trị', cx, ny + 84);
-
-  // ---- đáy: thông điệp chương trình ----
-  const by = H - 430;
-  ctx.textAlign = 'center';
+  // đường trang trí
+  cy += 92;
   ctx.strokeStyle = '#B8892E';
   ctx.lineWidth = 2;
-  ctx.beginPath(); ctx.moveTo(cx-140, by); ctx.lineTo(cx+140, by); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(cx-160, cy); ctx.lineTo(cx+160, cy); ctx.stroke();
 
+  // thông điệp chương trình
+  cy += 96;
   ctx.fillStyle = '#C22A26';
-  ctx.font = 'italic 700 46px "Fraunces"';
-  ctx.fillText('“UNLOCK” THANH XUÂN', cx, by + 80);
+  ctx.font = 'italic 700 54px "Fraunces"';
+  ctx.fillText('“UNLOCK” THANH XUÂN', cx, cy);
+  cy += 78;
   ctx.fillStyle = '#B8892E';
-  ctx.font = 'italic 600 38px "Fraunces"';
-  ctx.fillText('20 năm cùng về', cx, by + 136);
-
+  ctx.font = 'italic 600 42px "Fraunces"';
+  ctx.fillText('20 năm cùng về', cx, cy);
+  cy += 86;
   ctx.fillStyle = '#0F2A5E';
-  ctx.font = '700 27px "IBM Plex Mono"';
-  ctx.fillText('NIÊN KHÓA 2003 – 2006 · CHỦ NHẬT 30.08.2026', cx, by + 206);
+  ctx.font = '700 28px "IBM Plex Mono"';
+  ctx.fillText('NIÊN KHÓA 2003 – 2006 · CHỦ NHẬT 30.08.2026', cx, cy);
+  cy += 48;
   ctx.fillStyle = '#6E6555';
-  ctx.font = '400 24px "Source Serif 4"';
-  ctx.fillText('Moonlight 2 – Đường Trần Bình Trọng · Nam Đông Hà · Quảng Trị', cx, by + 250);
+  ctx.font = '400 25px "Source Serif 4"';
+  ctx.fillText('Moonlight 2 – Đường Trần Bình Trọng · Nam Đông Hà · Quảng Trị', cx, cy);
 }
 
 function currentName(){
@@ -564,7 +535,7 @@ function currentName(){
 async function redraw(){
   await drawFront(currentName());
   await drawBack();
-  await drawEnvelope(currentName());
+  await drawEnvelope();
 }
 
 function download(canvasId, filename){
@@ -645,19 +616,17 @@ function downloadBoth(){
 }
 
 function downloadEnvelopePdf(){
-  const base = (currentName()||'thay-co').replace(/\s+/g,'-');
   const env = document.getElementById('cardEnvelope');
   const { jsPDF } = window.jspdf;
   const pdf = new jsPDF({ unit: 'mm', format: 'a5', orientation: 'portrait' });
   const pw = pdf.internal.pageSize.getWidth();
   const ph = pdf.internal.pageSize.getHeight();
   pdf.addImage(env.toDataURL('image/jpeg', 0.95), 'JPEG', 0, 0, pw, ph);
-  pdf.save('phong-bi-' + base + '.pdf');
+  pdf.save('phong-bi.pdf');
 }
 
 function downloadEnvelopeImg(){
-  const base = (currentName()||'thay-co').replace(/\s+/g,'-');
-  download('cardEnvelope', 'phong-bi-' + base + '.png');
+  download('cardEnvelope', 'phong-bi.png');
 }
 
 async function init(){
