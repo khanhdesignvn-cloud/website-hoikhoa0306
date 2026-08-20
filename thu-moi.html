@@ -69,7 +69,7 @@
   .btn-row{display:flex; gap:12px; flex-wrap:wrap;}
 
   .cards{
-    display:grid; grid-template-columns:repeat(3, 1fr); gap:24px;
+    display:grid; grid-template-columns:1fr; gap:28px;
   }
   .card-block{text-align:center;}
   .card-block h3{
@@ -77,11 +77,23 @@
     text-transform:uppercase; color:var(--text-muted); margin-bottom:12px;
   }
   canvas{
-    width:100%; max-width:700px; height:auto;
+    width:100%; max-width:780px; height:auto;
     border-radius:12px; box-shadow:0 24px 50px -24px rgba(15,42,94,0.4);
     border:1px solid var(--line); background:#fff;
   }
   .dl-btn{margin-top:14px;}
+
+  .xtabs{margin:0 0 26px;}
+  .xtab{background:var(--paper); border:1px solid var(--line); border-radius:12px; margin-bottom:10px; overflow:hidden;}
+  .xtab summary{cursor:pointer; list-style:none; padding:14px 18px; font-weight:700; font-family:var(--font-body); color:var(--navy-ink); font-size:15px; user-select:none;}
+  .xtab summary::-webkit-details-marker{display:none;}
+  .xtab summary::after{content:'▾'; float:right; color:var(--gold);}
+  .xtab[open] summary::after{content:'▴';}
+  .xtab-body{padding:4px 18px 16px; color:var(--text-muted); font-size:14px; line-height:1.6;}
+  body.dark{background:#141210;}
+  body.dark .panel, body.dark .xtab{background:#1e1a16; border-color:rgba(255,255,255,0.12);}
+  body.dark .xtab summary, body.dark header h1, body.dark header .eyebrow{color:#f1e8d8;}
+  body.dark .xtab-body, body.dark header p, body.dark .field label{color:#b8ad9c;}
 
   @media (max-width:760px){
     .cards{grid-template-columns:1fr;}
@@ -113,18 +125,36 @@
     </div>
   </div>
 
+  <div class="xtabs">
+    <details class="xtab">
+      <summary>📰 Chuyên tin</summary>
+      <div class="xtab-body">
+        <p>Thiệp mời đã chuyển sang <b>khổ bì thư 1/3 A4</b> (DL 110×220mm, ngang) — chữ to dễ đọc, in vừa phong bì chuẩn.</p>
+      </div>
+    </details>
+    <details class="xtab">
+      <summary>🌙 Chuyên góc tối</summary>
+      <div class="xtab-body">
+        <label style="display:flex;align-items:center;gap:10px;cursor:pointer;">
+          <input type="checkbox" id="darkMode" onchange="toggleDark()" style="width:20px;height:20px;">
+          Bật chế độ tối cho trang công cụ
+        </label>
+      </div>
+    </details>
+  </div>
+
   <div class="cards">
     <div class="card-block">
       <h3>Mặt Trước</h3>
-      <canvas id="cardFront" width="1748" height="2480"></canvas>
+      <canvas id="cardFront" width="2598" height="1299"></canvas>
     </div>
     <div class="card-block">
       <h3>Mặt Sau</h3>
-      <canvas id="cardBack" width="1748" height="2480"></canvas>
+      <canvas id="cardBack" width="2598" height="1299"></canvas>
     </div>
     <div class="card-block">
       <h3>Phong Bì</h3>
-      <canvas id="cardEnvelope" width="1748" height="2480"></canvas>
+      <canvas id="cardEnvelope" width="2598" height="1299"></canvas>
     </div>
   </div>
 </div>
@@ -209,105 +239,88 @@ async function drawFront(name){
   // outer + inner gold frame
   ctx.strokeStyle = 'rgba(15,42,94,0.14)';
   ctx.lineWidth = 2;
-  ctx.strokeRect(70,70,W-140,H-140);
+  ctx.strokeRect(40,40,W-80,H-80);
   ctx.strokeStyle = '#B8892E';
   ctx.lineWidth = 2;
   ctx.globalAlpha = 0.6;
-  roundRect(ctx,110,110,W-220,H-220,18);
+  roundRect(ctx,70,70,W-140,H-140,16);
   ctx.stroke();
   ctx.globalAlpha = 1;
 
-  let cy = 240;
-  const cx = W/2;
+  const lcx = W * 0.30;   // cột trái — nhận diện
+  const rcx = W * 0.70;   // cột phải — lời ngỏ
+
+  // ---- cột trái ----
   ctx.textAlign = 'center';
+  const logoSize = 170;
+  ctx.drawImage(logoImg, lcx-logoSize/2, 100, logoSize, logoSize);
+  let cy = 100 + logoSize + 34;
 
-  // logo trường
-  const logoSize = 230;
-  ctx.drawImage(logoImg, cx-logoSize/2, cy, logoSize, logoSize);
-  cy += logoSize + 82;
-
-  // THU MOI
   ctx.fillStyle = '#0F2A5E';
-  ctx.font = '900 104px "Fraunces"';
-  ctx.fillText('THƯ MỜI', cx, cy);
-  cy += 74;
+  ctx.font = '900 90px "Fraunces"';
+  ctx.fillText('THƯ MỜI', lcx, cy);
+  cy += 64;
   ctx.fillStyle = '#B8892E';
-  ctx.font = 'italic 600 44px "Fraunces"';
-  ctx.fillText('Trân trọng kính mời', cx, cy);
-
-  cy += 112;
-  ctx.fillStyle = '#0A1D42';
-  ctx.font = 'italic 700 70px "Fraunces"';
-  const nameLines = wrapText(ctx, name || 'Quý Thầy Cô', W-360);
-  for(const l of nameLines){ ctx.fillText(l, cx, cy); cy += 88; }
-
-  cy += 60;
-  ctx.fillStyle = '#6E6555';
-  ctx.font = '500 30px "IBM Plex Mono"';
-  ctx.letterSpacing = '2px';
-  ctx.fillText('VỀ THAM DỰ CHƯƠNG TRÌNH HỌP KHÓA', cx, cy);
-  ctx.letterSpacing = '0px';
-
-  cy += 84;
-  ctx.fillStyle = '#C22A26';
-  ctx.font = 'italic 700 52px "Fraunces"';
-  ctx.fillText('“UNLOCK” Thanh Xuân', cx, cy);
-  cy += 66;
-  ctx.fillStyle = '#B8892E';
-  ctx.font = 'italic 600 44px "Fraunces"';
-  ctx.fillText('20 năm cùng về', cx, cy);
+  ctx.font = 'italic 600 38px "Fraunces"';
+  ctx.fillText('Trân trọng kính mời', lcx, cy);
 
   cy += 86;
+  ctx.fillStyle = '#0A1D42';
+  ctx.font = 'italic 700 54px "Fraunces"';
+  const nameLines = wrapText(ctx, name || 'Quý Thầy Cô', W*0.38);
+  for(const l of nameLines){ ctx.fillText(l, lcx, cy); cy += 64; }
+
+  cy += 42;
+  ctx.fillStyle = '#C22A26';
+  ctx.font = 'italic 700 44px "Fraunces"';
+  ctx.fillText('“UNLOCK” Thanh Xuân', lcx, cy);
+  cy += 54;
+  ctx.fillStyle = '#B8892E';
+  ctx.font = 'italic 600 36px "Fraunces"';
+  ctx.fillText('20 năm cùng về', lcx, cy);
+  cy += 58;
   ctx.fillStyle = '#0F2A5E';
-  ctx.font = '700 34px "IBM Plex Mono"';
-  ctx.fillText('NIÊN KHÓA 2003 – 2006', cx, cy);
-  cy += 48;
-  ctx.font = '500 28px "IBM Plex Mono"';
+  ctx.font = '700 30px "IBM Plex Mono"';
+  ctx.fillText('NIÊN KHÓA 2003 – 2006', lcx, cy);
+  cy += 42;
   ctx.fillStyle = '#6E6555';
-  ctx.fillText('TRƯỜNG THPT CHUYÊN LÊ QUÝ ĐÔN – QUẢNG TRỊ', cx, cy);
+  ctx.font = '500 26px "IBM Plex Mono"';
+  ctx.fillText('TRƯỜNG THPT CHUYÊN LÊ QUÝ ĐÔN', lcx, cy);
+  cy += 38;
+  ctx.fillText('QUẢNG TRỊ', lcx, cy);
 
-  cy += 70;
-  ctx.strokeStyle = '#B8892E';
-  ctx.lineWidth = 2;
-  ctx.beginPath(); ctx.moveTo(cx-120, cy); ctx.lineTo(cx+120, cy); ctx.stroke();
-
-  cy += 88;
+  // ---- cột phải ----
   ctx.textAlign = 'center';
-  const bodyW = W - 400;
+  const bodyW = W * 0.34;
+  let ry = 210;
   ctx.fillStyle = '#0A1D42';
   ctx.font = 'italic 600 40px "Source Serif 4"';
-  ctx.fillText('Kính thưa Quý Thầy Cô!', cx, cy);
-  cy += 66;
-
+  ctx.fillText('Kính thưa Quý Thầy Cô!', rcx, ry);
+  ry += 60;
   ctx.fillStyle = '#3A3428';
-  ctx.font = '400 34px "Source Serif 4"';
+  ctx.font = '400 36px "Source Serif 4"';
   const paras = [
-    'Hai mươi năm — một chặng đường đủ để chúng em trưởng thành, đủ để thêm trân quý những bài học và tình cảm mà Thầy Cô đã dành cho chúng em.',
-    'Chúng em xin được tri ân và kính mời Thầy Cô về tham dự chương trình họp khóa để cùng gặp gỡ, sẻ chia và sống lại những kỷ niệm đẹp của một thời áo trắng.',
-    'Sự hiện diện của Thầy Cô là niềm vinh hạnh và động lực lớn đối với tập thể chúng em.'
+    'Hai mươi năm — một chặng đường đủ để chúng em trưởng thành và thêm trân quý những bài học Thầy Cô đã trao.',
+    'Chúng em trân trọng kính mời Thầy Cô về tham dự chương trình họp khóa, cùng sống lại kỷ niệm một thời áo trắng.'
   ];
   for(const p of paras){
     const lines = wrapText(ctx, p, bodyW);
-    for(const l of lines){ ctx.fillText(l, cx, cy); cy += 50; }
-    cy += 18;
+    for(const l of lines){ ctx.fillText(l, rcx, ry); ry += 52; }
+    ry += 22;
   }
-  cy += 8;
-  ctx.font = 'italic 500 38px "Source Serif 4"';
+  ry += 6;
+  ctx.font = 'italic 500 36px "Source Serif 4"';
   ctx.fillStyle = '#0F2A5E';
-  ctx.fillText('Trân trọng!', cx, cy);
+  ctx.fillText('Trân trọng!', rcx, ry);
 
-  // bottom tagline (anchored relative to content, not fixed too high)
-  const tagY = Math.max(cy + 110, H - 210);
+  // ---- footer ----
   ctx.textAlign = 'center';
   ctx.fillStyle = '#B8892E';
-  ctx.font = 'italic 500 30px "Fraunces"';
-  const tagLines = wrapText(ctx, 'Cảm ơn Thầy Cô — những người lái đò thầm lặng đưa chúng em đến bến bờ tri thức và trưởng thành!', W-420);
-  let ty = tagY;
-  for(const l of tagLines){ ctx.fillText(l, cx, ty); ty += 42; }
-
-  ctx.font = '600 28px "IBM Plex Mono"';
+  ctx.font = 'italic 500 28px "Fraunces"';
+  ctx.fillText('Cảm ơn Thầy Cô — người lái đò thầm lặng đưa bao thế hệ học trò trưởng thành!', W/2, H-110);
+  ctx.font = '600 26px "IBM Plex Mono"';
   ctx.fillStyle = '#0F2A5E';
-  ctx.fillText('BAN LIÊN LẠC KHÓA 2003 – 2006', cx, H-150);
+  ctx.fillText('BAN LIÊN LẠC KHÓA 2003 – 2006', W/2, H-64);
 }
 
 async function drawBack(){
@@ -320,112 +333,101 @@ async function drawBack(){
 
   ctx.strokeStyle = 'rgba(15,42,94,0.14)';
   ctx.lineWidth = 2;
-  ctx.strokeRect(70,70,W-140,H-140);
+  ctx.strokeRect(40,40,W-80,H-80);
   ctx.strokeStyle = '#B8892E';
   ctx.globalAlpha = 0.6;
-  roundRect(ctx,110,110,W-220,H-220,18);
+  roundRect(ctx,70,70,W-140,H-140,16);
   ctx.stroke();
   ctx.globalAlpha = 1;
 
-  const cx = W/2;
-  let cy = 140;
-
-  // banner image (ảnh 1) at top — cap chiều cao để chừa chỗ cho 8 mốc
-  let bnW = W - 220;
-  let bnH = bnW * (bannerImg.height / bannerImg.width);
-  if (bnH > 620) { bnH = 620; bnW = 620 * (bannerImg.width / bannerImg.height); }
-  roundRect(ctx, cx-bnW/2, cy, bnW, bnH, 10);
-  ctx.save();
-  ctx.clip();
-  ctx.drawImage(bannerImg, cx-bnW/2, cy, bnW, bnH);
+  // ---- banner trái ----
+  const bx = 90, by = 95;
+  let bnH = 430;
+  let bnW = bnH * (bannerImg.width / bannerImg.height);
+  if (bnW > 800) { bnW = 800; bnH = 800 * (bannerImg.height / bannerImg.width); }
+  roundRect(ctx, bx, by, bnW, bnH, 10);
+  ctx.save(); ctx.clip();
+  ctx.drawImage(bannerImg, bx, by, bnW, bnH);
   ctx.restore();
   ctx.strokeStyle = 'rgba(15,42,94,0.18)';
   ctx.lineWidth = 1.5;
-  roundRect(ctx, cx-bnW/2, cy, bnW, bnH, 10);
-  ctx.stroke();
-  cy += bnH + 40;
+  roundRect(ctx, bx, by, bnW, bnH, 10); ctx.stroke();
 
+  // tiêu đề dưới banner
   ctx.textAlign = 'center';
+  const bCx = bx + bnW/2;
+  let cy = by + bnH + 48;
   ctx.fillStyle = '#C22A26';
-  ctx.font = '500 26px "IBM Plex Mono"';
+  ctx.font = '700 30px "IBM Plex Mono"';
   ctx.letterSpacing = '5px';
-  ctx.fillText('L Ị C H   T R Ì N H', cx, cy);
+  ctx.fillText('LỊCH TRÌNH', bCx, cy);
   ctx.letterSpacing = '0px';
-
-  cy += 58;
+  cy += 54;
   ctx.fillStyle = '#0A1D42';
-  ctx.font = '700 40px "Fraunces"';
-  ctx.fillText('“UNLOCK” THANH XUÂN – 20 NĂM CÙNG VỀ', cx, cy);
-
+  ctx.font = '700 32px "Fraunces"';
+  ctx.fillText('“UNLOCK” THANH XUÂN', bCx, cy);
+  cy += 46;
+  ctx.fillStyle = '#B8892E';
+  ctx.font = 'italic 600 28px "Fraunces"';
+  ctx.fillText('20 năm cùng về', bCx, cy);
   cy += 44;
   ctx.fillStyle = '#6E6555';
-  ctx.font = '400 24px "Source Serif 4"';
-  ctx.fillText('Niên khóa 2003 – 2006 · Chủ Nhật 30.08.2026', cx, cy);
+  ctx.font = '400 22px "Source Serif 4"';
+  ctx.fillText('Niên khóa 2003 – 2006 · Chủ Nhật 30.08.2026', bCx, cy);
 
-  cy += 48;
-  const rowX = 190;
-  const rowW = W - 380;
-  ctx.textAlign = 'left';
+  // ---- lịch trình phải (2 cột) ----
+  const sY = 130;
+  const colW = 740;
+  const colX = [940, 1750];
 
-  for(const sec of SCHEDULE){
-    // tiêu đề phần
+  for(let i=0;i<SCHEDULE.length;i++){
+    const sec = SCHEDULE[i];
+    const sx = colX[i];
+    let sy = sY;
+    ctx.textAlign = 'left';
     ctx.fillStyle = '#C22A26';
-    ctx.font = '700 26px "Fraunces"';
-    ctx.fillText(sec.section, rowX, cy+2);
+    ctx.font = '700 28px "Fraunces"';
+    ctx.fillText(sec.section, sx, sy);
     ctx.fillStyle = '#6E6555';
     ctx.font = '400 20px "Source Serif 4"';
-    ctx.textAlign = 'right';
-    ctx.fillText(sec.loc, rowX+rowW, cy+2);
-    ctx.textAlign = 'left';
-    cy += 32;
+    ctx.fillText(sec.loc, sx, sy+30);
+    sy += 52;
 
     for(const [time, title] of sec.items){
-      // row background
       ctx.fillStyle = '#FFFDF8';
       ctx.strokeStyle = 'rgba(15,42,94,0.14)';
       ctx.lineWidth = 1;
-      roundRect(ctx, rowX, cy, rowW, 104, 12);
+      roundRect(ctx, sx, sy, colW, 88, 10);
       ctx.fill(); ctx.stroke();
-
       ctx.fillStyle = '#C22A26';
-      ctx.font = '700 24px "Fraunces"';
-      ctx.textAlign = 'left';
-      ctx.fillText(time, rowX+30, cy+42);
-
+      ctx.font = '700 26px "Fraunces"';
+      ctx.fillText(time, sx+22, sy+34);
       ctx.fillStyle = '#0A1D42';
-      ctx.font = '600 27px "Source Serif 4"';
-      ctx.fillText(title, rowX+240, cy+40);
-
-      cy += 116;
+      ctx.font = '600 30px "Source Serif 4"';
+      ctx.fillText(title, sx+22, sy+72);
+      sy += 100;
     }
-    cy += 4;
   }
 
-  // footer contact block
-  cy += 30;
-  ctx.strokeStyle = 'rgba(15,42,94,0.14)';
-  ctx.beginPath(); ctx.moveTo(rowX, cy); ctx.lineTo(rowX+rowW, cy); ctx.stroke();
-  cy += 60;
-
-  // QR
-  const qrSize = 170;
-  ctx.drawImage(qrImg, rowX, cy-40, qrSize, qrSize);
-
+  // ---- footer liên hệ ----
   ctx.textAlign = 'left';
+  const qrSize = 150;
+  const fy = 970;
+  ctx.drawImage(qrImg, 90, fy, qrSize, qrSize);
   ctx.fillStyle = '#0F2A5E';
-  ctx.font = '600 32px "Source Serif 4"';
-  ctx.fillText('Liên hệ Ban Tổ Chức', rowX+qrSize+40, cy+10);
-  ctx.font = '400 28px "Source Serif 4"';
+  ctx.font = '600 34px "Source Serif 4"';
+  ctx.fillText('Liên hệ Ban Tổ Chức', 90+qrSize+30, fy+42);
+  ctx.font = '400 30px "Source Serif 4"';
   ctx.fillStyle = '#3A3428';
-  ctx.fillText('Huyền Hân Hoan · 0983293171', rowX+qrSize+40, cy+56);
-  ctx.font = '400 24px "Source Serif 4"';
+  ctx.fillText('Huyền Hân Hoan · 0983293171', 90+qrSize+30, fy+92);
+  ctx.font = '400 26px "Source Serif 4"';
   ctx.fillStyle = '#6E6555';
-  ctx.fillText('Quét mã QR tham gia nhóm Zalo', rowX+qrSize+40, cy+94);
+  ctx.fillText('Quét mã QR tham gia nhóm Zalo', 90+qrSize+30, fy+134);
 
   ctx.textAlign = 'center';
   ctx.fillStyle = '#B8892E';
-  ctx.font = 'italic 500 30px "Fraunces"';
-  ctx.fillText('Cảm ơn Thầy Cô đã đồng hành cùng bao thế hệ học trò', cx, cy+170);
+  ctx.font = 'italic 500 26px "Fraunces"';
+  ctx.fillText('Cảm ơn Thầy Cô đã đồng hành cùng bao thế hệ học trò', W/2, H-60);
 }
 
 async function drawEnvelope(){
@@ -441,59 +443,52 @@ async function drawEnvelope(){
   // outer + inner gold frame
   ctx.strokeStyle = 'rgba(15,42,94,0.14)';
   ctx.lineWidth = 2;
-  ctx.strokeRect(70,70,W-140,H-140);
+  ctx.strokeRect(40,40,W-80,H-80);
   ctx.strokeStyle = '#B8892E';
   ctx.globalAlpha = 0.6;
-  roundRect(ctx,110,110,W-220,H-220,18);
+  roundRect(ctx,70,70,W-140,H-140,16);
   ctx.stroke();
   ctx.globalAlpha = 1;
 
-  const cx = W/2;
-  ctx.textAlign = 'center';
-
-  // logo trường (căn giữa)
-  const logoSize = 220;
-  ctx.drawImage(logoImg, cx-logoSize/2, 760, logoSize, logoSize);
-  let cy = 760 + logoSize + 70;
-
-  // người gửi (căn giữa)
+  // ---- trái: người gửi ----
+  const L = 110;
+  ctx.textAlign = 'left';
+  const logoSize = 130;
+  ctx.drawImage(logoImg, L, 100, logoSize, logoSize);
+  let cy = 100 + logoSize + 30;
   ctx.fillStyle = '#0F2A5E';
-  ctx.font = '700 34px "IBM Plex Mono"';
-  ctx.fillText('BAN LIÊN LẠC KHÓA 2003 – 2006', cx, cy);
-  cy += 56;
+  ctx.font = '700 32px "IBM Plex Mono"';
+  ctx.fillText('BAN LIÊN LẠC KHÓA 2003 – 2006', L, cy);
+  cy += 46;
   ctx.fillStyle = '#3A3428';
   ctx.font = '400 28px "Source Serif 4"';
-  ctx.fillText('Trường THPT Chuyên Lê Quý Đôn', cx, cy);
-  cy += 48;
-  ctx.fillStyle = '#6E6555';
-  ctx.font = '400 25px "Source Serif 4"';
-  ctx.fillText('Phường Nam Đông Hà · Quảng Trị', cx, cy);
+  ctx.fillText('Trường THPT Chuyên Lê Quý Đôn', L, cy);
   cy += 42;
-  ctx.fillText('ĐT: 0983293171', cx, cy);
-
-  // đường trang trí
-  cy += 92;
-  ctx.strokeStyle = '#B8892E';
-  ctx.lineWidth = 2;
-  ctx.beginPath(); ctx.moveTo(cx-160, cy); ctx.lineTo(cx+160, cy); ctx.stroke();
-
-  // thông điệp chương trình
-  cy += 96;
-  ctx.fillStyle = '#C22A26';
-  ctx.font = 'italic 700 54px "Fraunces"';
-  ctx.fillText('“UNLOCK” THANH XUÂN', cx, cy);
-  cy += 78;
-  ctx.fillStyle = '#B8892E';
-  ctx.font = 'italic 600 42px "Fraunces"';
-  ctx.fillText('20 năm cùng về', cx, cy);
-  cy += 86;
-  ctx.fillStyle = '#0F2A5E';
-  ctx.font = '700 28px "IBM Plex Mono"';
-  ctx.fillText('NIÊN KHÓA 2003 – 2006 · CHỦ NHẬT 30.08.2026', cx, cy);
-  cy += 48;
   ctx.fillStyle = '#6E6555';
-  ctx.font = '400 25px "Source Serif 4"';
-  ctx.fillText('Moonlight 2 – Đường Trần Bình Trọng · Nam Đông Hà · Quảng Trị', cx, cy);
+  ctx.font = '400 26px "Source Serif 4"';
+  ctx.fillText('Phường Nam Đông Hà · Quảng Trị', L, cy);
+  cy += 40;
+  ctx.fillText('ĐT: 0983293171', L, cy);
+
+  // ---- phải: thông điệp chương trình ----
+  ctx.textAlign = 'center';
+  const rcx = W * 0.68;
+  let ry = 230;
+  ctx.fillStyle = '#C22A26';
+  ctx.font = 'italic 700 60px "Fraunces"';
+  ctx.fillText('“UNLOCK” THANH XUÂN', rcx, ry);
+  ry += 82;
+  ctx.fillStyle = '#B8892E';
+  ctx.font = 'italic 600 46px "Fraunces"';
+  ctx.fillText('20 năm cùng về', rcx, ry);
+  ry += 96;
+  ctx.fillStyle = '#0F2A5E';
+  ctx.font = '700 32px "IBM Plex Mono"';
+  ctx.fillText('NIÊN KHÓA 2003 – 2006 · CHỦ NHẬT 30.08.2026', rcx, ry);
+  ry += 52;
+  ctx.fillStyle = '#6E6555';
+  ctx.font = '400 28px "Source Serif 4"';
+  ctx.fillText('Moonlight 2 – Đường Trần Bình Trọng · Nam Đông Hà · Quảng Trị', rcx, ry);
 }
 
 function currentName(){
@@ -531,7 +526,7 @@ function downloadAllPrint(){
   setTimeout(async function(){
     try{
       const { jsPDF } = window.jspdf;
-      const pdf = new jsPDF({ unit:'mm', format:'a5', orientation:'portrait' });
+      const pdf = new jsPDF({ unit:'mm', format:[220, 110], orientation:'landscape' });
       const pw = pdf.internal.pageSize.getWidth();
       const ph = pdf.internal.pageSize.getHeight();
 
@@ -549,8 +544,8 @@ function downloadAllPrint(){
         await drawFront(names[i]);
         const frontData = document.getElementById('cardFront').toDataURL('image/jpeg', 0.9);
         if(first){ pdf.addImage(frontData,'JPEG',0,0,pw,ph); first=false; }
-        else { pdf.addPage('a5','portrait'); pdf.addImage(frontData,'JPEG',0,0,pw,ph); }
-        pdf.addPage('a5','portrait');
+        else { pdf.addPage([220, 110], 'landscape'); pdf.addImage(frontData,'JPEG',0,0,pw,ph); }
+        pdf.addPage([220, 110], 'landscape');
         pdf.addImage(backData,'JPEG',0,0,pw,ph);
       }
 
@@ -573,12 +568,12 @@ function downloadBoth(){
 
   // A5 = 148 x 210 mm
   const { jsPDF } = window.jspdf;
-  const pdf = new jsPDF({ unit: 'mm', format: 'a5', orientation: 'portrait' });
+  const pdf = new jsPDF({ unit: 'mm', format: [220, 110], orientation: 'landscape' });
   const pw = pdf.internal.pageSize.getWidth();
   const ph = pdf.internal.pageSize.getHeight();
 
   pdf.addImage(front.toDataURL('image/jpeg', 0.95), 'JPEG', 0, 0, pw, ph);
-  pdf.addPage('a5', 'portrait');
+  pdf.addPage([220, 110], 'landscape');
   pdf.addImage(back.toDataURL('image/jpeg', 0.95), 'JPEG', 0, 0, pw, ph);
 
   pdf.save('thiep-moi-' + base + '.pdf');
@@ -587,7 +582,7 @@ function downloadBoth(){
 function downloadEnvelopePdf(){
   const env = document.getElementById('cardEnvelope');
   const { jsPDF } = window.jspdf;
-  const pdf = new jsPDF({ unit: 'mm', format: 'a5', orientation: 'portrait' });
+  const pdf = new jsPDF({ unit: 'mm', format: [220, 110], orientation: 'landscape' });
   const pw = pdf.internal.pageSize.getWidth();
   const ph = pdf.internal.pageSize.getHeight();
   pdf.addImage(env.toDataURL('image/jpeg', 0.95), 'JPEG', 0, 0, pw, ph);
@@ -596,6 +591,10 @@ function downloadEnvelopePdf(){
 
 function downloadEnvelopeImg(){
   download('cardEnvelope', 'phong-bi.png');
+}
+
+function toggleDark(){
+  document.body.classList.toggle('dark', document.getElementById('darkMode').checked);
 }
 
 async function init(){
