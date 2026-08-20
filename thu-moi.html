@@ -217,128 +217,97 @@ async function drawFront(name){
   ctx.stroke();
   ctx.globalAlpha = 1;
 
-  let cy = 210;
+  let cy = 240;
   const cx = W/2;
   ctx.textAlign = 'center';
 
-  // logo trường (đã bỏ huy hiệu 20 năm)
-  const logoSize = 210;
+  // logo trường
+  const logoSize = 230;
   ctx.drawImage(logoImg, cx-logoSize/2, cy, logoSize, logoSize);
-  cy += logoSize + 70;
+  cy += logoSize + 82;
 
   // THU MOI
   ctx.fillStyle = '#0F2A5E';
-  ctx.font = '900 88px "Fraunces"';
+  ctx.font = '900 104px "Fraunces"';
   ctx.fillText('THƯ MỜI', cx, cy);
-  cy += 62;
+  cy += 74;
   ctx.fillStyle = '#B8892E';
-  ctx.font = 'italic 600 38px "Fraunces"';
+  ctx.font = 'italic 600 44px "Fraunces"';
   ctx.fillText('Trân trọng kính mời', cx, cy);
 
-  cy += 90;
+  cy += 112;
   ctx.fillStyle = '#0A1D42';
-  ctx.font = 'italic 700 62px "Fraunces"';
-  const nameLines = wrapText(ctx, name || 'Quý Thầy Cô', W-380);
-  for(const l of nameLines){ ctx.fillText(l, cx, cy); cy += 76; }
+  ctx.font = 'italic 700 70px "Fraunces"';
+  const nameLines = wrapText(ctx, name || 'Quý Thầy Cô', W-360);
+  for(const l of nameLines){ ctx.fillText(l, cx, cy); cy += 88; }
 
-  cy += 46;
+  cy += 60;
   ctx.fillStyle = '#6E6555';
-  ctx.font = '500 26px "IBM Plex Mono"';
+  ctx.font = '500 30px "IBM Plex Mono"';
   ctx.letterSpacing = '2px';
-  ctx.fillText('VỀ THAM DỰ CHƯƠNG TRÌNH', cx, cy);
+  ctx.fillText('VỀ THAM DỰ CHƯƠNG TRÌNH HỌP KHÓA', cx, cy);
   ctx.letterSpacing = '0px';
 
-  cy += 66;
+  cy += 84;
   ctx.fillStyle = '#C22A26';
-  ctx.font = 'italic 700 42px "Fraunces"';
+  ctx.font = 'italic 700 52px "Fraunces"';
   ctx.fillText('“UNLOCK” Thanh Xuân', cx, cy);
-  cy += 54;
+  cy += 66;
   ctx.fillStyle = '#B8892E';
-  ctx.font = 'italic 600 38px "Fraunces"';
+  ctx.font = 'italic 600 44px "Fraunces"';
   ctx.fillText('20 năm cùng về', cx, cy);
 
-  cy += 64;
+  cy += 86;
   ctx.fillStyle = '#0F2A5E';
-  ctx.font = '700 30px "IBM Plex Mono"';
+  ctx.font = '700 34px "IBM Plex Mono"';
   ctx.fillText('NIÊN KHÓA 2003 – 2006', cx, cy);
-  cy += 42;
-  ctx.font = '500 25px "IBM Plex Mono"';
+  cy += 48;
+  ctx.font = '500 28px "IBM Plex Mono"';
   ctx.fillStyle = '#6E6555';
   ctx.fillText('TRƯỜNG THPT CHUYÊN LÊ QUÝ ĐÔN – QUẢNG TRỊ', cx, cy);
 
-  cy += 56;
+  cy += 70;
   ctx.strokeStyle = '#B8892E';
   ctx.lineWidth = 2;
-  ctx.beginPath(); ctx.moveTo(cx-110, cy); ctx.lineTo(cx+110, cy); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(cx-120, cy); ctx.lineTo(cx+120, cy); ctx.stroke();
 
-  cy += 66;
+  cy += 88;
   ctx.textAlign = 'center';
-  const bodyW = W - 460;
+  const bodyW = W - 400;
   ctx.fillStyle = '#0A1D42';
-  ctx.font = 'italic 600 34px "Source Serif 4"';
+  ctx.font = 'italic 600 40px "Source Serif 4"';
   ctx.fillText('Kính thưa Quý Thầy Cô!', cx, cy);
-  cy += 52;
+  cy += 66;
 
   ctx.fillStyle = '#3A3428';
-  ctx.font = '400 29px "Source Serif 4"';
+  ctx.font = '400 34px "Source Serif 4"';
   const paras = [
     'Hai mươi năm — một chặng đường đủ để chúng em trưởng thành, đủ để thêm trân quý những bài học và tình cảm mà Thầy Cô đã dành cho chúng em.',
-    'Chúng em xin được tri ân và kính mời Thầy Cô về tham dự chương trình họp lớp để cùng gặp gỡ, sẻ chia và sống lại những kỷ niệm đẹp của một thời áo trắng.',
+    'Chúng em xin được tri ân và kính mời Thầy Cô về tham dự chương trình họp khóa để cùng gặp gỡ, sẻ chia và sống lại những kỷ niệm đẹp của một thời áo trắng.',
     'Sự hiện diện của Thầy Cô là niềm vinh hạnh và động lực lớn đối với tập thể chúng em.'
   ];
   for(const p of paras){
     const lines = wrapText(ctx, p, bodyW);
-    for(const l of lines){ ctx.fillText(l, cx, cy); cy += 40; }
-    cy += 10;
+    for(const l of lines){ ctx.fillText(l, cx, cy); cy += 50; }
+    cy += 18;
   }
-  cy += 6;
-  ctx.font = 'italic 500 30px "Source Serif 4"';
+  cy += 8;
+  ctx.font = 'italic 500 38px "Source Serif 4"';
   ctx.fillStyle = '#0F2A5E';
   ctx.fillText('Trân trọng!', cx, cy);
 
-  // info box
-  cy += 56;
-  const boxX = 200, boxW = W-400;
-  const rows = [
-    ['THỜI GIAN', '09h45, Chủ Nhật 30.08.2026'],
-    ['ĐỊA ĐIỂM', 'Moonlight 2 — Đường Trần Bình Trọng, Nam Đông Hà, Quảng Trị'],
-    ['THÀNH PHẦN', 'Quý Thầy Cô và các thành viên khóa 2003 – 2006']
-  ];
-  const rowH = 108;
-  const boxH = rows.length*rowH + 40;
-  ctx.fillStyle = '#FFFDF8';
-  ctx.strokeStyle = 'rgba(15,42,94,0.16)';
-  ctx.lineWidth = 1.5;
-  roundRect(ctx, boxX, cy, boxW, boxH, 14);
-  ctx.fill(); ctx.stroke();
-
-  let ry = cy + 44;
-  ctx.textAlign = 'center';
-  for(const [label, value] of rows){
-    ctx.fillStyle = '#B8892E';
-    ctx.font = '700 23px "IBM Plex Mono"';
-    ctx.fillText(label, cx, ry);
-    ctx.fillStyle = '#0A1D42';
-    ctx.font = '500 27px "Source Serif 4"';
-    const vLines = wrapText(ctx, value, boxW-100);
-    let vy = ry + 36;
-    for(const l of vLines.slice(0,2)){ ctx.fillText(l, cx, vy); vy += 34; }
-    ry += rowH;
-  }
-  cy += boxH;
-
   // bottom tagline (anchored relative to content, not fixed too high)
-  const tagY = Math.max(cy + 90, H - 190);
+  const tagY = Math.max(cy + 110, H - 210);
   ctx.textAlign = 'center';
   ctx.fillStyle = '#B8892E';
-  ctx.font = 'italic 500 27px "Fraunces"';
+  ctx.font = 'italic 500 30px "Fraunces"';
   const tagLines = wrapText(ctx, 'Cảm ơn Thầy Cô — những người lái đò thầm lặng đưa chúng em đến bến bờ tri thức và trưởng thành!', W-420);
   let ty = tagY;
-  for(const l of tagLines){ ctx.fillText(l, cx, ty); ty += 38; }
+  for(const l of tagLines){ ctx.fillText(l, cx, ty); ty += 42; }
 
-  ctx.font = '600 26px "IBM Plex Mono"';
+  ctx.font = '600 28px "IBM Plex Mono"';
   ctx.fillStyle = '#0F2A5E';
-  ctx.fillText('BAN LIÊN LẠC KHÓA 2003 – 2006', cx, H-140);
+  ctx.fillText('BAN LIÊN LẠC KHÓA 2003 – 2006', cx, H-150);
 }
 
 async function drawBack(){
