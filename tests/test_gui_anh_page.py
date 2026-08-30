@@ -74,3 +74,22 @@ def test_photo_upload_shows_progress_and_accepts_40_images():
     ]
     missing = [item for item in required if item not in html]
     assert not missing, f"Thiếu giới hạn 40 ảnh hoặc tiến độ upload: {missing}"
+
+
+def test_success_popup_links_to_drive_and_updates_sender_list():
+    html = PAGE.read_text(encoding="utf-8")
+    required = [
+        'id="thank-you-popup"',
+        'role="dialog"',
+        'id="thank-you-name"',
+        'id="thank-you-count"',
+        'id="close-thank-you"',
+        'href="https://drive.google.com/drive/folders/1-glZL1l1TupaanQTTGl0CBtMH7coO4og"',
+        'function showThankYouPopup',
+        'function addSenderToTable',
+        'addSenderToTable(name, chuyen, uploadedCount)',
+        'showThankYouPopup(name, uploadedCount)',
+        'setTimeout(loadSenderTableFromPhotos, 30000)',
+    ]
+    missing = [item for item in required if item not in html]
+    assert not missing, f"Thiếu popup cảm ơn hoặc cập nhật người gửi: {missing}"
