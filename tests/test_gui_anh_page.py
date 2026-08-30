@@ -43,14 +43,17 @@ def test_photo_page_has_grouped_library_and_sender_table():
         'href="#thu-vien-anh"',
         'Xem thư viện ảnh',
         'id="thu-vien-anh"',
-        'id="sender-groups"',
+        'id="latest-photo-grid"',
         'id="sender-table-body"',
         "fetch('photos.json'",
-        'function groupPhotosBySender',
+        'function latestPhotos',
+        '.slice(0, 6)',
         'function aggregateSenders',
         'function loadSenderTableFromPhotos',
-        'groupName.textContent = sender',
+        "var SENDER_REPORT_START = Date.parse('2026-08-30T15:43:35.000Z')",
+        '< SENDER_REPORT_START',
     ]
     missing = [item for item in required if item not in html]
     assert not missing, f"Thiếu thư viện hoặc bảng người gửi: {missing}"
+    assert 'id="sender-groups"' not in html
     assert "fetch('photo-log.json'" not in html
