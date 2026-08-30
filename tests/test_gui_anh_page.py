@@ -40,8 +40,8 @@ def test_home_navigation_links_to_photo_subpage():
 def test_photo_page_has_grouped_library_and_sender_table():
     html = PAGE.read_text(encoding="utf-8")
     required = [
-        'href="#thu-vien-anh"',
-        'Xem thư viện ảnh',
+        'href="https://drive.google.com/drive/folders/1-glZL1l1TupaanQTTGl0CBtMH7coO4og"',
+        'target="_blank" rel="noopener">Xem thư viện ảnh',
         'id="thu-vien-anh"',
         'id="latest-photo-grid"',
         'id="sender-table-body"',
@@ -57,3 +57,20 @@ def test_photo_page_has_grouped_library_and_sender_table():
     assert not missing, f"Thiếu thư viện hoặc bảng người gửi: {missing}"
     assert 'id="sender-groups"' not in html
     assert "fetch('photo-log.json'" not in html
+
+
+def test_photo_upload_shows_progress_and_accepts_40_images():
+    html = PAGE.read_text(encoding="utf-8")
+    required = [
+        'Tối đa 40 ảnh',
+        'var MAX_FILES = 40',
+        'var BATCH_SIZE = 4',
+        'id="upload-progress"',
+        'id="upload-progress-bar"',
+        'id="upload-progress-text"',
+        'new XMLHttpRequest()',
+        'xhr.upload.onprogress',
+        "btn.textContent = 'Đang tải ' + percent + '%'",
+    ]
+    missing = [item for item in required if item not in html]
+    assert not missing, f"Thiếu giới hạn 40 ảnh hoặc tiến độ upload: {missing}"
