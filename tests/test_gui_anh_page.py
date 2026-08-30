@@ -35,3 +35,21 @@ def test_gui_anh_page_uses_safe_dom_rendering_for_file_names():
 def test_home_navigation_links_to_photo_subpage():
     html = INDEX.read_text(encoding="utf-8")
     assert '<a href="gui-anh.html">Gửi ảnh</a>' in html
+
+
+def test_photo_page_has_grouped_library_and_sender_table():
+    html = PAGE.read_text(encoding="utf-8")
+    required = [
+        'href="#thu-vien-anh"',
+        'Xem thư viện ảnh',
+        'id="thu-vien-anh"',
+        'id="sender-groups"',
+        'id="sender-table-body"',
+        "fetch('photos.json'",
+        "fetch('photo-log.json'",
+        'function groupPhotosBySender',
+        'function aggregateSenders',
+        'groupName.textContent = sender',
+    ]
+    missing = [item for item in required if item not in html]
+    assert not missing, f"Thiếu thư viện hoặc bảng người gửi: {missing}"
