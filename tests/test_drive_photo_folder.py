@@ -12,7 +12,7 @@ def test_new_photo_uploads_use_requested_drive_folder():
     assert OLD_FOLDER_ID not in content
 
 
-def test_gallery_sync_preserves_legacy_folder_and_includes_new_folder():
+def test_gallery_sync_uses_only_event_photo_folder():
     content = SYNC_SCRIPT.read_text(encoding='utf-8')
     assert NEW_FOLDER_ID in content
-    assert OLD_FOLDER_ID in content
+    assert OLD_FOLDER_ID not in content

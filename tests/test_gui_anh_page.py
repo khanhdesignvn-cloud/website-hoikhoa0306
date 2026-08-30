@@ -46,10 +46,11 @@ def test_photo_page_has_grouped_library_and_sender_table():
         'id="sender-groups"',
         'id="sender-table-body"',
         "fetch('photos.json'",
-        "fetch('photo-log.json'",
         'function groupPhotosBySender',
         'function aggregateSenders',
+        'function loadSenderTableFromPhotos',
         'groupName.textContent = sender',
     ]
     missing = [item for item in required if item not in html]
     assert not missing, f"Thiếu thư viện hoặc bảng người gửi: {missing}"
+    assert "fetch('photo-log.json'" not in html

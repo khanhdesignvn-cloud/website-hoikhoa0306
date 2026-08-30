@@ -295,16 +295,19 @@ function loadGallery(){
 }
 function aggregateSenders(list){
   var senders = {};
-  (Array.isArray(list) ? list : []).forEach(function(entry){
-    if (!entry || !entry.name) return;
-    var display = String(entry.name).normalize('NFC').trim();
+  (Array.isArray(list) ? list : []).forEach(function(photo){
+    if (!photo || !photo.src) return;
+    var cap = String(photo.cap || '').trim();
+    var separator = cap.indexOf(' · ');
+    var display = senderFromCaption(cap).normalize('NFC').trim();
+    if (display === 'Kho ảnh chung') display = 'Không rõ người gửi';
     var key = display.toLocaleLowerCase('vi');
     if (!senders[key]) senders[key] = {name:display, classes:[], count:0, time:''};
     var item = senders[key];
-    var lop = String(entry.lop || '').trim();
+    var lop = separator > 0 ? cap.slice(separator + 3).trim() : '';
     if (lop && item.classes.indexOf(lop) < 0) item.classes.push(lop);
-    item.count += Number(entry.count) || 0;
-    if (String(entry.time || '') > item.time) item.time = String(entry.time || '');
+    item.count += 1;
+    if (String(photo.time || '') > item.time) item.time = String(photo.time || '');
   });
   return Object.keys(senders).map(function(key){ return senders[key]; }).sort(function(a,b){ return b.time.localeCompare(a.time); });
 }
@@ -321,14 +324,14 @@ function renderSenderTable(list){
     time.textContent = sender.time ? new Date(sender.time).toLocaleString('vi-VN') : '—'; row.appendChild(time); body.appendChild(row);
   });
 }
-function loadSenderTable(){
-  fetch('photo-log.json', {cache:'no-store'}).then(function(r){ return r.json(); }).then(renderSenderTable).catch(function(){
+function loadSenderTableFromPhotos(){
+  fetch('photos.json', {cache:'no-store'}).then(function(r){ return r.json(); }).then(renderSenderTable).catch(function(){
     var body = document.getElementById('sender-table-body'); body.textContent = '';
     var row = document.createElement('tr'); var cell = document.createElement('td'); cell.colSpan = 4; cell.textContent = 'Chưa tải được danh sách.'; row.appendChild(cell); body.appendChild(row);
   });
 }
 loadGallery();
-loadSenderTable();
+loadSenderTableFromPhotos();
 </script>
 </body>
 </html>
