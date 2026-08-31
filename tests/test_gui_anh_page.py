@@ -101,14 +101,12 @@ def test_gallery_is_gentle_clothesline_slider_with_latest_sender():
         'id="latest-sender-card"',
         'id="latest-sender-name"',
         'id="latest-sender-meta"',
-        'class="clothesline-frame"',
+        'class="clothesline-bleed"',
         'id="photo-slider"',
         'class="clothesline-wire"',
-        'class="slider-control slider-prev"',
-        'class="slider-control slider-next"',
         'function updateLatestSender',
         'function startGentleSlider',
-        'scrollBy({left: step, behavior:\'smooth\'})',
+        'requestAnimationFrame(glide)',
         "window.matchMedia('(prefers-reduced-motion: reduce)')",
         'updateLatestSender(name, chuyen, uploadedCount)',
     ]
@@ -116,11 +114,12 @@ def test_gallery_is_gentle_clothesline_slider_with_latest_sender():
     assert not missing, f"Thiếu dây ảnh slide hoặc thông tin người vừa gửi: {missing}"
 
 
-def test_clothesline_autoplays_and_keeps_drive_button_below():
+def test_clothesline_glides_continuously_without_frame_or_controls():
     html = PAGE.read_text(encoding="utf-8")
     required = [
-        'setInterval(function()',
-        '}, 4800)',
+        'var GLIDE_SPEED = 0.32',
+        'function glide(now)',
+        'requestAnimationFrame(glide)',
         'class="gallery-drive-link"',
         'Xem toàn bộ thư viện ảnh',
         'target="_blank" rel="noopener"',
@@ -128,3 +127,5 @@ def test_clothesline_autoplays_and_keeps_drive_button_below():
     missing = [item for item in required if item not in html]
     assert not missing, f"Thiếu tự chạy hoặc nút thư viện bên dưới: {missing}"
     assert html.index('class="gallery-drive-link"') > html.index('id="photo-slider"')
+    assert 'class="clothesline-frame"' not in html
+    assert 'class="slider-control' not in html
