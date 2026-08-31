@@ -117,7 +117,7 @@ def test_gallery_is_gentle_clothesline_slider_with_latest_sender():
 def test_clothesline_glides_continuously_without_frame_or_controls():
     html = PAGE.read_text(encoding="utf-8")
     required = [
-        'var GLIDE_SPEED = 0.32',
+        'var GLIDE_SPEED = 0.18',
         'function glide(now)',
         'requestAnimationFrame(glide)',
         'class="gallery-drive-link"',
