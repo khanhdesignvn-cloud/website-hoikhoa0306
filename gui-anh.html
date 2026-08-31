@@ -86,6 +86,8 @@ button:disabled{opacity:.58;cursor:wait}
 .library-photo figcaption{font:500 11px var(--font-mono);color:var(--text-muted);padding:9px 1px 1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .slider-control{position:absolute;z-index:4;top:50%;width:34px;height:34px;padding:0;border-radius:50%;display:grid;place-items:center;background:rgba(15,42,94,.9);box-shadow:0 8px 20px -12px rgba(0,0,0,.8);transform:translateY(-25%)}
 .slider-prev{left:8px}.slider-next{right:8px}
+.gallery-drive-link{display:table;margin:18px auto 0;padding:11px 20px;border:1px solid var(--gold);border-radius:999px;background:rgba(255,255,255,.72);color:var(--navy);font-weight:600;transition:background .2s ease,color .2s ease,transform .2s ease}
+.gallery-drive-link:hover{background:var(--navy);color:#fff;transform:translateY(-1px)}
 .library-empty{text-align:center;padding:24px;color:var(--text-muted)}
 .sender-panel{margin-top:34px;background:var(--paper);border:1px solid var(--line);border-radius:18px;overflow:hidden}
 .sender-panel h3{font-family:var(--font-display);font-size:22px;padding:20px 22px 12px}
@@ -175,6 +177,7 @@ footer{text-align:center;border-top:1px solid var(--line);padding:24px;font-size
       <div id="photo-slider" class="photo-slider"><p class="library-empty">Đang tải thư viện ảnh…</p></div>
       <button class="slider-control slider-next" type="button" aria-label="Ảnh tiếp theo">›</button>
     </div>
+    <a class="gallery-drive-link" href="https://drive.google.com/drive/folders/1-glZL1l1TupaanQTTGl0CBtMH7coO4og" target="_blank" rel="noopener">Xem toàn bộ thư viện ảnh ↗</a>
     <div class="sender-panel">
       <h3>Danh sách người gửi ảnh</h3>
       <div class="table-scroll">

@@ -114,3 +114,17 @@ def test_gallery_is_gentle_clothesline_slider_with_latest_sender():
     ]
     missing = [item for item in required if item not in html]
     assert not missing, f"Thiếu dây ảnh slide hoặc thông tin người vừa gửi: {missing}"
+
+
+def test_clothesline_autoplays_and_keeps_drive_button_below():
+    html = PAGE.read_text(encoding="utf-8")
+    required = [
+        'setInterval(function()',
+        '}, 4800)',
+        'class="gallery-drive-link"',
+        'Xem toàn bộ thư viện ảnh',
+        'target="_blank" rel="noopener"',
+    ]
+    missing = [item for item in required if item not in html]
+    assert not missing, f"Thiếu tự chạy hoặc nút thư viện bên dưới: {missing}"
+    assert html.index('class="gallery-drive-link"') > html.index('id="photo-slider"')
