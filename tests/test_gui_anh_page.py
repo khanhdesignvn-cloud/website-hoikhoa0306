@@ -43,7 +43,7 @@ def test_photo_page_has_grouped_library_and_sender_table():
         'href="https://drive.google.com/drive/folders/1-glZL1l1TupaanQTTGl0CBtMH7coO4og"',
         'target="_blank" rel="noopener">Xem thư viện ảnh',
         'id="thu-vien-anh"',
-        'id="latest-photo-grid"',
+        'id="photo-slider"',
         'id="sender-table-body"',
         "fetch('photos.json'",
         'function latestPhotos',
@@ -93,3 +93,24 @@ def test_success_popup_links_to_drive_and_updates_sender_list():
     ]
     missing = [item for item in required if item not in html]
     assert not missing, f"Thiếu popup cảm ơn hoặc cập nhật người gửi: {missing}"
+
+
+def test_gallery_is_gentle_clothesline_slider_with_latest_sender():
+    html = PAGE.read_text(encoding="utf-8")
+    required = [
+        'id="latest-sender-card"',
+        'id="latest-sender-name"',
+        'id="latest-sender-meta"',
+        'class="clothesline-frame"',
+        'id="photo-slider"',
+        'class="clothesline-wire"',
+        'class="slider-control slider-prev"',
+        'class="slider-control slider-next"',
+        'function updateLatestSender',
+        'function startGentleSlider',
+        'scrollBy({left: step, behavior:\'smooth\'})',
+        "window.matchMedia('(prefers-reduced-motion: reduce)')",
+        'updateLatestSender(name, chuyen, uploadedCount)',
+    ]
+    missing = [item for item in required if item not in html]
+    assert not missing, f"Thiếu dây ảnh slide hoặc thông tin người vừa gửi: {missing}"
